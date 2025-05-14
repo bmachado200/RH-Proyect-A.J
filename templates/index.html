@@ -8,18 +8,29 @@
 </head>
 <body>
     <div class="chat-container">
-        <h1 id="chatTitle">💬 Asistente de RH</h1>
+        <div class="chat-header">
+            <h1 class="chat-title">💬 Asistente de RH</h1>
+            <div class="powered-by">
+                Powered by Ollama/Llama3
+                <div class="ollama-status">
+                    <div class="status-indicator"></div>
+                    <span class="status-text">Connected</span>
+                </div>
+            </div>
+        </div>
         
         <div class="document-selector">
-            <label for="dbType">Consultar en:</label>
-            <select id="dbType">
-                <option value="internos">📄 Documentos Internos</option>
-                <option value="contrato">📑 Contrato Colectivo</option>
-            </select>
+            <button class="source-button active" data-source="internos">
+                📄 Documentos Internos
+            </button>
+            <button class="source-button" data-source="contrato">
+                📑 Contrato Colectivo
+            </button>
+            <button class="language-toggle" title="Toggle Language">🌐</button>
         </div>
         
         <div class="chat-box" id="chatBox">
-            <!-- Mensajes aparecerán aquí -->
+            <!-- Messages will appear here -->
         </div>
         
         <div class="input-area">
