@@ -1,0 +1,93 @@
+2025-05-10 16:23:47,043 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-10 16:23:47,047 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-10 16:27:09,696 - INFO - Iniciando carga de contrato colectivo
+2025-05-10 16:27:10,415 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-10 16:27:10,939 - ERROR - Error fatal: [WinError 3] The system cannot find the path specified: './HR/contrato_colectivo'
+2025-05-10 16:27:10,940 - INFO - Tiempo total: 0:00:01.242071
+2025-05-12 07:11:05,684 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 07:11:05,692 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 07:11:17,409 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 07:11:18,734 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 07:11:19,360 - INFO - Procesando 1 versiones de contrato
+2025-05-12 07:11:19,798 - INFO - Proceso completado. Chunks añadidos: 0
+2025-05-12 07:11:19,800 - INFO - Total en colección: 0
+2025-05-12 07:11:19,801 - INFO - Tiempo total: 0:00:02.389562
+2025-05-12 07:23:28,153 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 07:23:28,157 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 07:23:35,349 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 07:23:36,076 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 07:23:36,344 - INFO - Archivos encontrados: ['Contrato Colectivo 2024.docx']
+2025-05-12 07:23:36,345 - INFO - Procesando 1 versiones de contrato
+2025-05-12 07:23:36,609 - INFO - Proceso completado. Chunks añadidos: 0
+2025-05-12 07:23:36,611 - INFO - Total en colección: 0
+2025-05-12 07:23:36,611 - INFO - Tiempo total: 0:00:01.261937
+2025-05-12 07:26:45,557 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 07:26:45,561 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 07:26:50,234 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 07:26:50,478 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 07:26:50,927 - INFO - Archivos encontrados: ['Contrato Colectivo 2024.docx']
+2025-05-12 07:26:50,927 - INFO - Procesando 1 versiones de contrato
+2025-05-12 07:26:51,140 - INFO - Proceso completado. Chunks añadidos: 0
+2025-05-12 07:26:51,142 - INFO - Total en colección: 0
+2025-05-12 07:26:51,142 - INFO - Tiempo total: 0:00:00.906946
+2025-05-12 08:21:03,412 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 08:21:03,416 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 08:21:11,216 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 08:21:12,129 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 08:21:12,448 - INFO - Archivos encontrados: ['Contrato Colectivo 2024.docx']
+2025-05-12 08:21:12,448 - INFO - Procesando 1 versiones de contrato
+2025-05-12 08:21:12,685 - WARNING - No se encontraron secciones con el formato esperado
+2025-05-12 08:21:13,753 - INFO - Proceso completado. Chunks añadidos: 1
+2025-05-12 08:21:13,756 - INFO - Total en colección: 1
+2025-05-12 08:21:13,757 - INFO - Tiempo total: 0:00:02.534710
+2025-05-12 11:45:54,868 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 11:45:54,874 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 11:46:03,642 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 11:46:04,492 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 11:46:04,761 - INFO - Archivos encontrados: ['Contrato Colectivo 2024.docx']
+2025-05-12 11:46:04,761 - INFO - Procesando 1 versiones de contrato
+2025-05-12 11:46:04,984 - WARNING - No se encontraron secciones con el formato esperado
+2025-05-12 11:46:06,955 - INFO - Proceso completado. Chunks añadidos: 1
+2025-05-12 11:46:06,958 - INFO - Total en colección: 1
+2025-05-12 11:46:06,959 - INFO - Tiempo total: 0:00:03.317161
+2025-05-12 11:48:21,332 - INFO - GPU activada: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-05-12 11:48:21,337 - INFO - Load pretrained SentenceTransformer: BAAI/bge-m3
+2025-05-12 11:48:25,578 - INFO - Iniciando carga de contrato colectivo
+2025-05-12 11:48:25,799 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 11:48:26,211 - INFO - Archivos encontrados: ['Contrato Colectivo 2024.docx']
+2025-05-12 11:48:26,211 - INFO - Procesando 1 versiones de contrato
+2025-05-12 11:48:26,403 - WARNING - No se encontraron secciones con el formato esperado
+2025-05-12 11:48:27,069 - INFO - Proceso completado. Chunks añadidos: 1
+2025-05-12 11:48:27,072 - INFO - Total en colección: 1
+2025-05-12 11:48:27,073 - INFO - Tiempo total: 0:00:01.495084
+2025-05-12 11:50:18,171 - INFO - Iniciando carga de documentos
+2025-05-12 11:50:20,253 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 11:50:25,567 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:25,611 - WARNING - Reintentando (1) chunk Contrato Colectivo 2024.docx_0
+2025-05-12 11:50:33,353 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:33,354 - WARNING - Reintentando (2) chunk Contrato Colectivo 2024.docx_0
+2025-05-12 11:50:38,639 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:38,640 - ERROR - Error persistente con Contrato Colectivo 2024.docx_0: Embedding dimension 768 does not match collection dimensionality 1024
+2025-05-12 11:50:38,788 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:38,790 - WARNING - Reintentando (1) chunk Contrato Colectivo 2024.docx_1
+2025-05-12 11:50:44,010 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:44,011 - WARNING - Reintentando (2) chunk Contrato Colectivo 2024.docx_1
+2025-05-12 11:50:49,345 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:49,348 - ERROR - Error persistente con Contrato Colectivo 2024.docx_1: Embedding dimension 768 does not match collection dimensionality 1024
+2025-05-12 11:50:49,413 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:49,415 - WARNING - Reintentando (1) chunk Contrato Colectivo 2024.docx_2
+2025-05-12 11:50:54,493 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:54,494 - WARNING - Reintentando (2) chunk Contrato Colectivo 2024.docx_2
+2025-05-12 11:50:59,772 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:50:59,774 - ERROR - Error persistente con Contrato Colectivo 2024.docx_2: Embedding dimension 768 does not match collection dimensionality 1024
+2025-05-12 11:50:59,774 - INFO - Procesado Contrato Colectivo 2024.docx - 3 chunks
+2025-05-12 11:50:59,776 - INFO - Carga completada. Total chunks: 1
+2025-05-12 11:50:59,776 - INFO - Tiempo total: 0:00:41.604621
+2025-05-12 11:56:06,973 - INFO - Iniciando carga de documentos
+2025-05-12 11:56:09,037 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-05-12 11:56:14,280 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:56:14,472 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:56:14,539 - INFO - HTTP Request: POST http://localhost:11434/api/embeddings "HTTP/1.1 200 OK"
+2025-05-12 11:56:14,549 - INFO - Procesado Contrato Colectivo 2024.docx - 3 chunks
+2025-05-12 11:56:14,553 - INFO - Carga completada. Total chunks: 3
+2025-05-12 11:56:14,553 - INFO - Tiempo total: 0:00:07.578989
