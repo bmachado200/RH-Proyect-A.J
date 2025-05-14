@@ -1,4 +1,4 @@
-import chromadb from 'chromadb';
+import * as chromadb from 'chromadb';
 import fetch from 'node-fetch';
 
 export class HRChatbot {
