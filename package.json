@@ -1,0 +1,16 @@
+{
+  "name": "hr-search",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "load-docs": "node loadDocs.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "chromadb": "^1.8.1",
+    "docx": "^8.5.0",
+    "node-fetch": "^3.3.2"
+  }
+}
