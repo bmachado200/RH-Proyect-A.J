@@ -120,6 +120,8 @@ Las sanciones se aplican considerando la gravedad de la falta y el historial del
 
 Fuente: Capítulos XII y XIII del Reglamento Interno de Trabajo 2024.
 
+Si pregunto ¿Qué hago si creo que mi jefe está incumpliendo el contrato colectivo? anadir tambien el nombre de la persona.
+
         
         
 Context:
@@ -253,6 +255,9 @@ Nota importante
 Las sanciones se aplican considerando la gravedad de la falta y el historial del trabajador. El trabajador tiene derecho a ser escuchado en su defensa antes de cualquier sanción (Artículo 77).
 
 Fuente: Capítulos XII y XIII del Reglamento Interno de Trabajo 2024.
+
+Si pregunto ¿Qué hago si creo que mi jefe está incumpliendo el contrato colectivo? anadir tambien el nombre de la persona.
+
 """""
                         )
                     },

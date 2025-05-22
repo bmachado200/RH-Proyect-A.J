@@ -12,9 +12,6 @@ const translations = {
         welcome: "Welcome to HR Assistant",
         typing: "Generating response...",
         clear: "Clear Conversation",
-        contrato_colectivo: "Collective Agreement",
-        documentos_internos: "Internal Documents",
-        selectCollection: "Select document source:",
         helpTitle: "About HR Assistant",
         helpText: "This AI assistant specializes in HR policies and procedures at HISENSE ELECTRÓNICA MÉXICO. It can provide information from the Collective Work Agreement and Internal Work Regulations.",
         helpCapabilities: "Capabilities:",
@@ -22,7 +19,8 @@ const translations = {
         helpItem2: "Explain HR policies and procedures",
         helpItem3: "Provide information about benefits",
         helpItem4: "Clarify work regulations",
-        helpLanguage: "The assistant supports both English and Spanish."
+        helpLanguage: "The assistant supports both English and Spanish.",
+        suggestedTitle: "Try asking:"
     },
     spanish: {
         title: "💬 Asistente de RH",
@@ -36,9 +34,6 @@ const translations = {
         welcome: "Bienvenido al Asistente de RH",
         typing: "Generando respuesta...",
         clear: "Limpiar Conversación",
-        contrato_colectivo: "Contrato Colectivo",
-        documentos_internos: "Documentos Internos",
-        selectCollection: "Selecciona fuente de documentos:",
         helpTitle: "Acerca del Asistente de RH",
         helpText: "Este asistente de IA está especializado en políticas y procedimientos de RH en HISENSE ELECTRÓNICA MÉXICO. Puede proporcionar información del Contrato Colectivo de Trabajo y el Reglamento Interno de Trabajo.",
         helpCapabilities: "Capacidades:",
@@ -46,13 +41,28 @@ const translations = {
         helpItem2: "Explicar políticas y procedimientos de RH",
         helpItem3: "Proveer información sobre beneficios",
         helpItem4: "Aclarar regulaciones laborales",
-        helpLanguage: "El asistente soporta inglés y español."
+        helpLanguage: "El asistente soporta inglés y español.",
+        suggestedTitle: "Prueba preguntando:"
     }
+};
+
+const suggestedQuestions = {
+    english: [
+        "What benefits do I have as an employee under the collective agreement?",
+        "What should I do if I think my boss is violating the collective agreement?",
+        "What behaviors are prohibited according to the internal regulations?",
+        "What are the penalties for being late, absent, or failing to fulfill my duties?"
+    ],
+    spanish: [
+        "¿Qué beneficios tengo como trabajador bajo el contrato colectivo?",
+        "¿Qué hago si creo que mi jefe está incumpliendo el contrato colectivo?",
+        "¿Qué conductas están prohibidas según el reglamento interno?",
+        "¿Cuáles son las sanciones por llegar tarde, ausentarse o incumplir con mis deberes?"
+    ]
 };
 
 let appLanguage = 'english';
 
-// DOM Elements
 const languageButton = document.getElementById('languageButton');
 const chatTitle = document.getElementById('chatTitle');
 const userInput = document.getElementById('userInput');
@@ -65,49 +75,62 @@ const helpIcon = document.getElementById('floating-help-icon');
 const helpModal = document.getElementById('helpModal');
 const closeModal = document.querySelector('.close-modal');
 
-// Initialize UI with animations
+function showSuggestedQuestions() {
+    const questionsContainer = document.createElement('div');
+    questionsContainer.className = 'suggested-questions';
+    const title = document.createElement('div');
+    title.className = 'suggested-title';
+    title.textContent = translations[appLanguage].suggestedTitle;
+    questionsContainer.appendChild(title);
+
+    const questionsList = document.createElement('div');
+    questionsList.className = 'questions-list';
+
+    suggestedQuestions[appLanguage].forEach(question => {
+        const questionBtn = document.createElement('button');
+        questionBtn.className = 'suggested-question';
+        questionBtn.textContent = question;
+        questionBtn.addEventListener('click', () => {
+            userInput.value = question;
+            sendMessage();
+        });
+        questionsList.appendChild(questionBtn);
+    });
+
+    questionsContainer.appendChild(questionsList);
+    chatBox.appendChild(questionsContainer);
+    setTimeout(() => {
+        questionsContainer.style.opacity = '1';
+        questionsContainer.style.transform = 'translateY(0)';
+    }, 10);
+}
+
 function initUI() {
-    // Immediately show the app container (remove display:none)
     appContainer.style.display = 'block';
-    
-    // Set welcome title
     welcomeTitle.textContent = translations[appLanguage].welcome;
-    
-    // Show loading message in chat
     chatBox.innerHTML = `<div class="loading-message">${translations[appLanguage].loading}</div>`;
-    
-    // Simulate resource loading
     setTimeout(() => {
         updateUIText();
         chatBox.innerHTML = '';
         addBotMessage(translations[appLanguage].greeting);
-        
-        // Hide loading screen after content is ready
+        setTimeout(() => {
+            showSuggestedQuestions();
+        }, 500);
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.style.display = 'none';
             document.body.style.overflow = 'auto';
         }, 500);
-        
-        // Animate UI elements in
         animateUI();
-    }, 1000); // Reduced from 1500ms for faster perceived loading
+    }, 1000);
 }
 
-// Update all text elements based on current language
 function updateUIText() {
     const lang = translations[appLanguage];
     chatTitle.textContent = lang.title;
     userInput.placeholder = lang.placeholder;
     sendButton.textContent = lang.send;
     languageButton.textContent = lang.languageButton;
-    
-    // Update collection selector labels
-    document.querySelector('#collectionSelect option[value="contrato_colectivo"]').textContent = lang.contrato_colectivo;
-    document.querySelector('#collectionSelect option[value="documentos_internos"]').textContent = lang.documentos_internos;
-    document.querySelector('.collection-selector label').textContent = lang.selectCollection;
-    
-    // Update help modal text if it exists
     if (document.getElementById('helpModalTitle')) {
         document.getElementById('helpModalTitle').textContent = lang.helpTitle;
         document.getElementById('helpModalText').textContent = lang.helpText;
@@ -120,7 +143,6 @@ function updateUIText() {
     }
 }
 
-// Modal functionality
 if (helpIcon) {
     helpIcon.addEventListener('click', () => {
         helpModal.style.display = 'block';
@@ -139,7 +161,6 @@ if (closeModal) {
     });
 }
 
-// Close modal when clicking outside content
 window.addEventListener('click', (e) => {
     if (helpModal && e.target === helpModal) {
         helpModal.classList.remove('visible');
@@ -149,7 +170,6 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Close modal with ESC key
 document.addEventListener('keydown', (e) => {
     if (helpModal && e.key === 'Escape' && helpModal.style.display === 'block') {
         helpModal.classList.remove('visible');
@@ -159,10 +179,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Rest of your existing script.js code remains the same...
-// [Previous code continues below...]
-
-// Animate UI elements one after another
 function animateUI() {
     const elements = [
         document.querySelector('.top-bar'),
@@ -170,7 +186,6 @@ function animateUI() {
         document.querySelector('.chat-box'),
         document.querySelector('.input-area')
     ];
-    
     elements.forEach((el, index) => {
         setTimeout(() => {
             el.style.opacity = '1';
@@ -179,164 +194,114 @@ function animateUI() {
     });
 }
 
-// Toggle between languages
 function switchLanguage() {
     appLanguage = appLanguage === 'english' ? 'spanish' : 'english';
     updateUIText();
-    
-    // Animate language change
     chatBox.style.opacity = 0;
     setTimeout(() => {
         chatBox.innerHTML = '';
         addBotMessage(translations[appLanguage].greeting);
         chatBox.style.opacity = 1;
+        setTimeout(() => showSuggestedQuestions(), 500);
     }, 300);
 }
 
-// Enhanced bot message with cool effects
 function addBotMessage(message, specialEffect = true) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message bot-message';
     messageElement.style.opacity = '0';
     messageElement.style.transform = 'scaleY(0)';
     messageElement.style.transformOrigin = 'top';
-    
-    // Create message content container
+
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
     messageElement.appendChild(messageContent);
-    
     chatBox.appendChild(messageElement);
-    
-    // Animate container
+
     setTimeout(() => {
         messageElement.style.opacity = '1';
         messageElement.style.transform = 'scaleY(1)';
-        
-        // Typewriter effect
         let i = 0;
         const speed = Math.max(5, Math.min(15 - (message.length / 30), 5));
         const typingEffect = () => {
             if (i < message.length) {
-                messageContent.innerHTML += message.charAt(i);
-                i++;
+                messageContent.innerHTML += message.charAt(i++);
                 setTimeout(typingEffect, speed);
-                
-                // Auto-scroll with smooth behavior
                 const isNearBottom = chatBox.scrollHeight - chatBox.clientHeight - chatBox.scrollTop < 150;
                 if (isNearBottom) {
-                    chatBox.scrollTo({
-                        top: chatBox.scrollHeight,
-                        behavior: 'smooth'
-                    });
+                    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
                 }
             } else {
-                // Final reveal effect
                 messageElement.classList.add('reveal');
-                
-                // Pulse effect for important messages
                 if (specialEffect && message.length > 80) {
                     messageElement.classList.add('pulse');
-                    setTimeout(() => {
-                        messageElement.classList.remove('pulse');
-                    }, 1000);
+                    setTimeout(() => messageElement.classList.remove('pulse'), 1000);
                 }
             }
         };
-        
         setTimeout(typingEffect, 200);
     }, 10);
-    
     return messageElement;
 }
 
-// Add user message with animation
 function addUserMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message user-message';
     messageElement.style.opacity = '0';
     messageElement.style.transform = 'translateX(20px)';
     messageElement.innerHTML = message.replace(/\n/g, '<br>');
-    
     chatBox.appendChild(messageElement);
-    
     setTimeout(() => {
         messageElement.style.opacity = '1';
         messageElement.style.transform = 'translateX(0)';
-        chatBox.scrollTo({
-            top: chatBox.scrollHeight,
-            behavior: 'smooth'
-        });
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }, 10);
 }
 
-// Handle sending messages
 function sendMessage() {
     const question = userInput.value.trim();
     if (!question) {
         alert(translations[appLanguage].noQuestion);
         return;
     }
-    
     addUserMessage(question);
     userInput.value = '';
-    
-    // Get selected collection
-    const collectionSelect = document.getElementById('collectionSelect');
-    const selectedCollection = collectionSelect.value;
-    
-    // Show typing indicator
+
     const typingIndicator = document.createElement('div');
     typingIndicator.className = 'message bot-message typing-indicator';
     typingIndicator.innerHTML = `
-        <div class="typing-dots">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
         <div class="typing-text">${translations[appLanguage].typing}</div>
     `;
     chatBox.appendChild(typingIndicator);
     chatBox.scrollTop = chatBox.scrollHeight;
-    
-    // Create message element for streaming response
+
     const messageElement = document.createElement('div');
     messageElement.className = 'message bot-message streaming';
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
     messageElement.appendChild(messageContent);
     chatBox.appendChild(messageElement);
-    
-    // Use fetch with POST
+
     fetch('/ask', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'text/event-stream'
-        },
-        body: JSON.stringify({
-            question: question,
-            language: appLanguage,
-            collection: selectedCollection
-        })
+        headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+        body: JSON.stringify({ question: question, language: appLanguage })
     })
     .then(response => {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let partialData = '';
-        
         function readStream() {
-            return reader.read().then(({done, value}) => {
+            return reader.read().then(({ done, value }) => {
                 if (done) {
                     chatBox.removeChild(typingIndicator);
                     messageElement.classList.remove('streaming');
                     return;
                 }
-                
-                partialData += decoder.decode(value, {stream: true});
+                partialData += decoder.decode(value, { stream: true });
                 const lines = partialData.split('\n\n');
                 partialData = lines.pop();
-                
                 lines.forEach(line => {
                     if (line.startsWith('data: ')) {
                         const data = JSON.parse(line.substring(6));
@@ -346,11 +311,9 @@ function sendMessage() {
                         }
                     }
                 });
-                
                 return readStream();
             });
         }
-        
         return readStream();
     })
     .catch(error => {
@@ -361,35 +324,13 @@ function sendMessage() {
     });
 }
 
-// Clear conversation
-function clearConversation() {
-    const lang = translations[appLanguage];
-    const confirmation = confirm(lang.clear + "?");
-    
-    if (confirmation) {
-        chatBox.innerHTML = '';
-        fetch('/clear', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ language: appLanguage })
-        })
-        .then(() => {
-            addBotMessage(lang.greeting);
-        });
-    }
-}
-
-// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial setup - directly show the app
     initUI();
-
     setTimeout(() => {
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.style.display = 'none';
             appContainer.style.display = 'block';
-            
             setTimeout(() => {
                 appContainer.style.opacity = '1';
                 document.querySelector('.top-bar').classList.add('visible');
@@ -397,44 +338,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelector('#chatTitle').classList.add('visible');
                 document.querySelector('.chat-box').classList.add('visible');
                 document.querySelector('.input-area').classList.add('visible');
-                
-                // Initialize chat
                 initUI();
             }, 500);
         }, 500);
     }, 1000);
-    
-    // Input focus animation
+
     userInput.addEventListener('focus', () => {
         userInput.parentElement.style.boxShadow = '0 0 0 2px rgba(230, 126, 34, 0.3)';
     });
-    
     userInput.addEventListener('blur', () => {
         userInput.parentElement.style.boxShadow = 'none';
     });
-    
-    // Input validation
     userInput.addEventListener('input', () => {
-        if (userInput.value.trim().length > 0) {
-            sendButton.disabled = false;
-            sendButton.style.opacity = '1';
-        } else {
-            sendButton.disabled = true;
-            sendButton.style.opacity = '0.7';
-        }
+        sendButton.disabled = userInput.value.trim().length === 0;
+        sendButton.style.opacity = sendButton.disabled ? '0.7' : '1';
     });
 });
 
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
 languageButton.addEventListener('click', switchLanguage);
-if (clearButton) clearButton.addEventListener('click', clearConversation);
-
-chatBox.addEventListener('wheel', (e) => {
-    e.stopPropagation();
-});
-
-// Auto-scroll to bottom on load
-window.addEventListener('load', () => {
-    chatBox.scrollTop = chatBox.scrollHeight;
-});

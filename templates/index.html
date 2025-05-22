@@ -6,7 +6,6 @@
     <title>HR Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* Initial state styles */
         #appContainer {
             display: none;
             opacity: 0;
@@ -40,16 +39,10 @@
 
     <div id="appContainer">
         <div class="top-bar">
-            <div class="collection-selector">
-                <label for="collectionSelect">Select document source:</label>
-                <select id="collectionSelect">
-                    <option value="contrato_colectivo">Collective Agreement</option>
-                    <option value="documentos_internos">Internal Documents</option>
-                </select>
-            </div>
+            <!-- Removed document selector -->
             <button id="languageButton">Español</button>
         </div>
-        
+
         <div class="chat-container">
             <h1 id="chatTitle">💬 HR Assistant</h1>
             <div class="chat-box" id="chatBox">
@@ -72,7 +65,7 @@
                 <span class="close-modal">&times;</span>
                 <h2 id="helpModalTitle">About HR Assistant</h2>
                 <p id="helpModalText">This AI assistant specializes in HR policies and procedures.</p>
-                
+
                 <h3 id="helpModalCapabilities">Capabilities:</h3>
                 <ul>
                     <li id="helpModalItem1">Answer questions about employee rights</li>
@@ -80,7 +73,7 @@
                     <li id="helpModalItem3">Provide information about benefits</li>
                     <li id="helpModalItem4">Clarify work regulations</li>
                 </ul>
-                
+
                 <p id="helpModalLanguage">The assistant supports both English and Spanish.</p>
             </div>
         </div>

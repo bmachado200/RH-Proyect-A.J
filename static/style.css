@@ -453,3 +453,52 @@ html {
 .modal-content li {
     margin-bottom: 8px;
 }
+
+/* Suggested questions styles */
+.suggested-questions {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #2b619e;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.suggested-title {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.questions-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.suggested-question {
+    background-color: #e9f0f8;
+    color: #2b619e;
+    border: 1px solid #d0dceb;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.suggested-question:hover {
+    background-color: #2b619e;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Hide suggested questions after user starts conversation */
+.chat-started .suggested-questions {
+    display: none;
+}
