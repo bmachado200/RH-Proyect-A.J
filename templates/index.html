@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Initial state styles */
+        #appContainer {
+            display: none;
+            opacity: 0;
+        }
+        .top-bar {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        .chat-container {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        #chatTitle {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .chat-box {
+            opacity: 0;
+        }
+        .input-area {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="loading">
+        <div class="spinner"></div>
+        <p id="welcomeTitle">Loading HR Assistant...</p>
+    </div>
+
+    <div id="appContainer">
+        <div class="top-bar">
+            <div class="collection-selector">
+                <label for="collectionSelect">Select document source:</label>
+                <select id="collectionSelect">
+                    <option value="contrato_colectivo">Collective Agreement</option>
+                    <option value="documentos_internos">Internal Documents</option>
+                </select>
+            </div>
+            <button id="languageButton">Español</button>
+        </div>
+        
+        <div class="chat-container">
+            <h1 id="chatTitle">💬 HR Assistant</h1>
+            <div class="chat-box" id="chatBox">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Type your question here..." autocomplete="off">
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+
+        <!-- Floating Help Button -->
+        <div id="floating-help-icon" class="floating-help">
+            <span>?</span>
+        </div>
+
+        <!-- Help Modal -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="helpModalTitle">About HR Assistant</h2>
+                <p id="helpModalText">This AI assistant specializes in HR policies and procedures.</p>
+                
+                <h3 id="helpModalCapabilities">Capabilities:</h3>
+                <ul>
+                    <li id="helpModalItem1">Answer questions about employee rights</li>
+                    <li id="helpModalItem2">Explain HR policies and procedures</li>
+                    <li id="helpModalItem3">Provide information about benefits</li>
+                    <li id="helpModalItem4">Clarify work regulations</li>
+                </ul>
+                
+                <p id="helpModalLanguage">The assistant supports both English and Spanish.</p>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
