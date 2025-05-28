@@ -2,6 +2,8 @@
 const translations = {
     english: {
         title: "💬 HR Assistant",
+        sidebarTitle: "Welcome!",
+        welcomeMessage: "Oficial AI HR Chatbot",
         placeholder: "Type your question here...",
         send: "Send",
         greeting: "Hello! I'm your HR Assistant. How can I help you today? 🤖",
@@ -20,10 +22,14 @@ const translations = {
         helpItem3: "Provide information about benefits",
         helpItem4: "Clarify work regulations",
         helpLanguage: "The assistant supports both English and Spanish.",
-        suggestedTitle: "Try asking:"
+        suggestedTitle: "Try asking:",
+        helpButtonText: "Help",
+        settingsButtonText: "Settings"
     },
     spanish: {
         title: "💬 Asistente de RH",
+        sidebarTitle: "Bienvenido!",
+        welcomeMessage: "AI Chat Oficial de RH",
         placeholder: "Escribe tu pregunta aquí...",
         send: "Enviar",
         greeting: "¡Hola! Soy tu asistente de Recursos Humanos. ¿En qué puedo ayudarte hoy? 🤖",
@@ -42,7 +48,9 @@ const translations = {
         helpItem3: "Proveer información sobre beneficios",
         helpItem4: "Aclarar regulaciones laborales",
         helpLanguage: "El asistente soporta inglés y español.",
-        suggestedTitle: "Prueba preguntando:"
+        suggestedTitle: "Prueba preguntando:",
+        helpButtonText: "Ayuda",
+        settingsButtonText: "Configuración"
     }
 };
 
@@ -63,6 +71,7 @@ const suggestedQuestions = {
 
 let appLanguage = 'english';
 
+// DOM Elements
 const languageButton = document.getElementById('languageButton');
 const chatTitle = document.getElementById('chatTitle');
 const userInput = document.getElementById('userInput');
@@ -71,10 +80,64 @@ const chatBox = document.getElementById('chatBox');
 const loadingScreen = document.getElementById('loadingScreen');
 const appContainer = document.getElementById('appContainer');
 const welcomeTitle = document.getElementById('welcomeTitle');
-const helpIcon = document.getElementById('floating-help-icon');
+const helpButton = document.getElementById('helpButton');
 const helpModal = document.getElementById('helpModal');
 const closeModal = document.querySelector('.close-modal');
+const sidebarTitle = document.getElementById('sidebarTitle');
+const welcomeMessage = document.getElementById('welcomeMessage');
+const helpButtonText = document.getElementById('helpButtonText');
+const settingsButtonText = document.getElementById('settingsButtonText');
 
+// Initialize UI
+function initUI() {
+    appContainer.style.display = 'block';
+    welcomeTitle.textContent = translations[appLanguage].welcome;
+    chatBox.innerHTML = `<div class="loading-message">${translations[appLanguage].loading}</div>`;
+    
+    setTimeout(() => {
+        updateUIText();
+        chatBox.innerHTML = '';
+        addBotMessage(translations[appLanguage].greeting);
+        setTimeout(() => {
+            showSuggestedQuestions();
+        }, 500);
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 500);
+        animateUI();
+    }, 1000);
+}
+
+// Update all UI text elements
+function updateUIText() {
+    const lang = translations[appLanguage];
+    
+    // Main chat area
+    chatTitle.textContent = lang.title;
+    userInput.placeholder = lang.placeholder;
+    sendButton.textContent = lang.send;
+    
+    // Sidebar elements
+    sidebarTitle.textContent = lang.sidebarTitle;
+    welcomeMessage.textContent = lang.welcomeMessage;
+    helpButtonText.textContent = lang.helpButtonText;
+    settingsButtonText.textContent = lang.settingsButtonText;
+    languageButton.textContent = lang.languageButton;
+    
+    // Modal content
+    document.getElementById('helpModalTitle').textContent = lang.helpTitle;
+    document.getElementById('helpModalText').textContent = lang.helpText;
+    document.getElementById('helpModalCapabilities').textContent = lang.helpCapabilities;
+    document.getElementById('helpModalItem1').textContent = lang.helpItem1;
+    document.getElementById('helpModalItem2').textContent = lang.helpItem2;
+    document.getElementById('helpModalItem3').textContent = lang.helpItem3;
+    document.getElementById('helpModalItem4').textContent = lang.helpItem4;
+    document.getElementById('helpModalLanguage').textContent = lang.helpLanguage;
+}
+
+// Show suggested questions
 function showSuggestedQuestions() {
     const questionsContainer = document.createElement('div');
     questionsContainer.className = 'suggested-questions';
@@ -105,80 +168,7 @@ function showSuggestedQuestions() {
     }, 10);
 }
 
-function initUI() {
-    appContainer.style.display = 'block';
-    welcomeTitle.textContent = translations[appLanguage].welcome;
-    chatBox.innerHTML = `<div class="loading-message">${translations[appLanguage].loading}</div>`;
-    setTimeout(() => {
-        updateUIText();
-        chatBox.innerHTML = '';
-        addBotMessage(translations[appLanguage].greeting);
-        setTimeout(() => {
-            showSuggestedQuestions();
-        }, 500);
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 500);
-        animateUI();
-    }, 1000);
-}
-
-function updateUIText() {
-    const lang = translations[appLanguage];
-    chatTitle.textContent = lang.title;
-    userInput.placeholder = lang.placeholder;
-    sendButton.textContent = lang.send;
-    languageButton.textContent = lang.languageButton;
-    if (document.getElementById('helpModalTitle')) {
-        document.getElementById('helpModalTitle').textContent = lang.helpTitle;
-        document.getElementById('helpModalText').textContent = lang.helpText;
-        document.getElementById('helpModalCapabilities').textContent = lang.helpCapabilities;
-        document.getElementById('helpModalItem1').textContent = lang.helpItem1;
-        document.getElementById('helpModalItem2').textContent = lang.helpItem2;
-        document.getElementById('helpModalItem3').textContent = lang.helpItem3;
-        document.getElementById('helpModalItem4').textContent = lang.helpItem4;
-        document.getElementById('helpModalLanguage').textContent = lang.helpLanguage;
-    }
-}
-
-if (helpIcon) {
-    helpIcon.addEventListener('click', () => {
-        helpModal.style.display = 'block';
-        setTimeout(() => {
-            helpModal.classList.add('visible');
-        }, 10);
-    });
-}
-
-if (closeModal) {
-    closeModal.addEventListener('click', () => {
-        helpModal.classList.remove('visible');
-        setTimeout(() => {
-            helpModal.style.display = 'none';
-        }, 300);
-    });
-}
-
-window.addEventListener('click', (e) => {
-    if (helpModal && e.target === helpModal) {
-        helpModal.classList.remove('visible');
-        setTimeout(() => {
-            helpModal.style.display = 'none';
-        }, 300);
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (helpModal && e.key === 'Escape' && helpModal.style.display === 'block') {
-        helpModal.classList.remove('visible');
-        setTimeout(() => {
-            helpModal.style.display = 'none';
-        }, 300);
-    }
-});
-
+// Animate UI elements
 function animateUI() {
     const elements = [
         document.querySelector('.top-bar'),
@@ -194,6 +184,7 @@ function animateUI() {
     });
 }
 
+// Switch between English and Spanish
 function switchLanguage() {
     appLanguage = appLanguage === 'english' ? 'spanish' : 'english';
     updateUIText();
@@ -206,6 +197,22 @@ function switchLanguage() {
     }, 300);
 }
 
+// Help modal functions
+function openHelpModal() {
+    helpModal.style.display = 'block';
+    setTimeout(() => {
+        helpModal.classList.add('visible');
+    }, 10);
+}
+
+function closeHelpModal() {
+    helpModal.classList.remove('visible');
+    setTimeout(() => {
+        helpModal.style.display = 'none';
+    }, 300);
+}
+
+// Message functions
 function addBotMessage(message, specialEffect = true) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message bot-message';
@@ -258,6 +265,7 @@ function addUserMessage(message) {
     }, 10);
 }
 
+// Send message to server
 function sendMessage() {
     const question = userInput.value.trim();
     if (!question) {
@@ -324,6 +332,7 @@ function sendMessage() {
     });
 }
 
+// Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initUI();
     setTimeout(() => {
@@ -338,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelector('#chatTitle').classList.add('visible');
                 document.querySelector('.chat-box').classList.add('visible');
                 document.querySelector('.input-area').classList.add('visible');
-                initUI();
             }, 500);
         }, 500);
     }, 1000);
@@ -355,6 +363,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Button event listeners
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
 languageButton.addEventListener('click', switchLanguage);
+helpButton.addEventListener('click', openHelpModal);
+closeModal.addEventListener('click', closeHelpModal);
+
+// Close modal when clicking outside or pressing Escape
+window.addEventListener('click', (e) => {
+    if (e.target === helpModal) {
+        closeHelpModal();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && helpModal.style.display === 'block') {
+        closeHelpModal();
+    }
+});
