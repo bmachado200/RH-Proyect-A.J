@@ -38,25 +38,46 @@
     </div>
 
     <div id="appContainer">
-        <div class="top-bar">
-            <!-- Removed document selector -->
-            <button id="languageButton">Español</button>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebarTitle">HR Assistant</h2>
+                <p class="welcome-message" id="welcomeMessage">Hello! How can I help you today?</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <button id="helpButton" class="sidebar-button">
+                    <span class="icon">?</span>
+                    <span id="helpButtonText">Help</span>
+                </button>
+                <button id="settingsButton" class="sidebar-button">
+                    <span class="icon">⚙️</span>
+                    <span id="settingsButtonText">Settings</span>
+                </button>
+                <button id="languageButton" class="sidebar-button language-switch">
+                    <span class="icon">🌐</span>
+                    <span id="languageButtonText">Switch to Español</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-footer">
+                <p id="sidebarFooter">HISENSE ELECTRÓNICA MÉXICO</p>
+            </div>
         </div>
 
-        <div class="chat-container">
-            <h1 id="chatTitle">💬 HR Assistant</h1>
-            <div class="chat-box" id="chatBox">
-                <!-- Messages will appear here -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 id="chatTitle">💬 HR Assistant</h1>
             </div>
-            <div class="input-area">
-                <input type="text" id="userInput" placeholder="Type your question here..." autocomplete="off">
-                <button id="sendButton">Send</button>
-            </div>
-        </div>
 
-        <!-- Floating Help Button -->
-        <div id="floating-help-icon" class="floating-help">
-            <span>?</span>
+            <div class="chat-container">
+                <div class="chat-box" id="chatBox">
+                    <!-- Messages will appear here -->
+                </div>
+                <div class="input-area">
+                    <input type="text" id="userInput" placeholder="Type your question here..." autocomplete="off">
+                    <button id="sendButton">Send</button>
+                </div>
+            </div>
         </div>
 
         <!-- Help Modal -->
