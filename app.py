@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, Response
 from query import assistant
 from dotenv import load_dotenv
 import os
 import secrets
-from flask import Response
-import json
 from datetime import timedelta
+import json
 
 # Load environment variables FIRST
 load_dotenv()
@@ -96,6 +95,43 @@ def ask_question():
         app.logger.error(f"API Error: {str(e)}")
         return jsonify({'error': error_msg}), 500
 
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    data = request.get_json()
+    text = data.get('text', '').strip()
+    target_language = data.get('target_language', 'english')
+    
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+    
+    try:
+        # Determine the source language (opposite of target)
+        source_language = 'spanish' if target_language == 'english' else 'english'
+        
+        # Create a translation prompt
+        prompt = f"Translate the following text from {source_language} to {target_language} while preserving all formatting, markdown, lists, and special characters. Only respond with the translated text:\n\n{text}"
+        
+        response = assistant.client_oa.chat.completions.create(
+            model=assistant.OPENAI_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional translator. Translate the text exactly as requested, preserving all formatting."
+                },
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.1,
+            max_tokens=2000
+        )
+        
+        translated_text = response.choices[0].message.content
+        return jsonify({'translated_text': translated_text})
+        
+    except Exception as e:
+        error_msg = f"Translation error: {str(e)}"
+        app.logger.error(f"Translation Error: {str(e)}")
+        return jsonify({'error': error_msg}), 500
+
 @app.route('/clear', methods=['POST'])
 def clear_conversation():
     """Reset conversation history"""
@@ -109,6 +145,6 @@ if __name__ == '__main__':
     app.run(
         debug=os.getenv("FLASK_ENV") == 'development',
         host='0.0.0.0',  # Allow connections from any IP
-        port=int(os.getenv("FLASK_PORT", 5000)),
+        port=int(os.getenv("FLASK_PORT", 6000)),
         threaded=True
     )
