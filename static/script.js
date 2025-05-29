@@ -24,7 +24,8 @@ const translations = {
         helpLanguage: "The assistant supports both English and Spanish.",
         suggestedTitle: "Try asking:",
         helpButtonText: "Help",
-        settingsButtonText: "Settings"
+        settingsButtonText: "Settings",
+        translating: "Translating..."
     },
     spanish: {
         title: "💬 Asistente de RH",
@@ -50,7 +51,8 @@ const translations = {
         helpLanguage: "El asistente soporta inglés y español.",
         suggestedTitle: "Prueba preguntando:",
         helpButtonText: "Ayuda",
-        settingsButtonText: "Configuración"
+        settingsButtonText: "Configuración",
+        translating: "Traduciendo..."
     }
 };
 
@@ -212,6 +214,41 @@ function closeHelpModal() {
     }, 300);
 }
 
+// Translation function
+function translateMessage(messageElement, targetLanguage) {
+    const messageContent = messageElement.querySelector('.message-text');
+    const currentText = messageContent.textContent;
+    
+    // Don't translate if already in the target language
+    if (targetLanguage === appLanguage) return;
+
+    // Show loading state
+    const originalText = messageContent.innerHTML;
+    messageContent.innerHTML = `<div class="loading-translation">${translations[appLanguage].translating}</div>`;
+    
+    fetch('/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            text: currentText,
+            target_language: targetLanguage
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            messageContent.innerHTML = originalText;
+            console.error('Translation error:', data.error);
+            return;
+        }
+        messageContent.innerHTML = data.translated_text || originalText;
+    })
+    .catch(error => {
+        console.error('Translation failed:', error);
+        messageContent.innerHTML = originalText;
+    });
+}
+
 // Message functions
 function addBotMessage(message, specialEffect = true) {
     const messageElement = document.createElement('div');
@@ -223,6 +260,24 @@ function addBotMessage(message, specialEffect = true) {
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
     messageElement.appendChild(messageContent);
+
+    // Add translation button container
+    const translationContainer = document.createElement('div');
+    translationContainer.className = 'translation-buttons';
+    
+    const translateButton = document.createElement('button');
+    translateButton.className = 'translate-btn';
+    translateButton.innerHTML = appLanguage === 'english' ? 'ES' : 'EN';
+    translateButton.title = appLanguage === 'english' ? 'Translate to Spanish' : 'Translate to English';
+    
+    translateButton.addEventListener('click', () => {
+        const targetLanguage = appLanguage === 'english' ? 'spanish' : 'english';
+        translateMessage(messageElement, targetLanguage);
+    });
+    
+    translationContainer.appendChild(translateButton);
+    messageElement.appendChild(translationContainer);
+
     chatBox.appendChild(messageElement);
 
     setTimeout(() => {
@@ -305,6 +360,24 @@ function sendMessage() {
                 if (done) {
                     chatBox.removeChild(typingIndicator);
                     messageElement.classList.remove('streaming');
+                    
+                    // Add translation button to the completed message
+                    const translationContainer = document.createElement('div');
+                    translationContainer.className = 'translation-buttons';
+                    
+                    const translateButton = document.createElement('button');
+                    translateButton.className = 'translate-btn';
+                    translateButton.innerHTML = appLanguage === 'english' ? 'ES' : 'EN';
+                    translateButton.title = appLanguage === 'english' ? 'Translate to Spanish' : 'Translate to English';
+                    
+                    translateButton.addEventListener('click', () => {
+                        const targetLanguage = appLanguage === 'english' ? 'spanish' : 'english';
+                        translateMessage(messageElement, targetLanguage);
+                    });
+                    
+                    translationContainer.appendChild(translateButton);
+                    messageElement.appendChild(translationContainer);
+                    
                     return;
                 }
                 partialData += decoder.decode(value, { stream: true });
