@@ -553,3 +553,44 @@ html {
         min-width: 50%;
     }
 }
+
+/* Translation button styles */
+.translation-buttons {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.bot-message:hover .translation-buttons {
+    opacity: 1;
+}
+
+.translate-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #2f55d1;
+    border: 1px solid #2f55d1;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 5px;
+}
+
+.translate-btn:hover {
+    background: #2f55d1;
+    color: white;
+}
+
+.bot-message {
+    position: relative;
+    padding-right: 40px !important; /* Make space for the button */
+}
+
+.loading-translation {
+    color: #666;
+    font-style: italic;
+    opacity: 0.7;
+}
