@@ -2,7 +2,8 @@
 const translations = {
     english: {
         title: "💬 HR Assistant",
-        sidebarTitle: "Welcome!",
+        sidebarTitle: "Welcome!", // Used for desktop sidebar header
+        mobileMenuTitle: "Menu", // For mobile collapsed header
         welcomeMessage: "Oficial AI HR Chatbot",
         placeholder: "Type your question here...",
         send: "Send",
@@ -11,7 +12,7 @@ const translations = {
         error: "❌ Error processing your question, please insert your API Key",
         languageButton: "Español",
         loading: "Loading your HR assistant...",
-        welcome: "Welcome to HR Assistant",
+        welcome: "Welcome to HR Assistant", // For loading screen
         typing: "Generating response...",
         clear: "Clear Conversation",
         helpTitle: "About HR Assistant",
@@ -37,16 +38,17 @@ const translations = {
     },
     spanish: {
         title: "💬 Asistente de RH",
-        sidebarTitle: "Bienvenido!",
+        sidebarTitle: "¡Bienvenido!", // Used for desktop sidebar header
+        mobileMenuTitle: "Menú", // For mobile collapsed header
         welcomeMessage: "AI Chat Oficial de RH",
         placeholder: "Escribe tu pregunta aquí...",
         send: "Enviar",
         greeting: "¡Hola! Soy tu asistente de Recursos Humanos. ¿En qué puedo ayudarte hoy? 🤖",
         noQuestion: "Por favor ingresa una pregunta",
-        error: "❌ Error al procesar tu pregunta, por favor ingresa tu API Key",
+        error: "❌ Error al procesar tu pregunta, porfavor ingresa tu API Key",
         languageButton: "English",
         loading: "Cargando tu asistente de RH...",
-        welcome: "Bienvenido al Asistente de RH",
+        welcome: "Bienvenido al Asistente de RH", // For loading screen
         typing: "Generando respuesta...",
         clear: "Limpiar Conversación",
         helpTitle: "Acerca del Asistente de RH",
@@ -97,12 +99,11 @@ const sendButton = document.getElementById('sendButton');
 const chatBox = document.getElementById('chatBox');
 const loadingScreen = document.getElementById('loadingScreen');
 const appContainer = document.getElementById('appContainer');
-const welcomeTitle = document.getElementById('welcomeTitle');
+const welcomeTitle = document.getElementById('welcomeTitle'); // On loading screen
 const helpButton = document.getElementById('helpButton');
 const helpModal = document.getElementById('helpModal');
-// const closeModal = document.querySelector('.close-modal'); // REMOVED this line
-const sidebarTitle = document.getElementById('sidebarTitle');
-const welcomeMessage = document.getElementById('welcomeMessage');
+const sidebarTitle = document.getElementById('sidebarTitle'); // Desktop sidebar title
+const welcomeMessage = document.getElementById('welcomeMessage'); // Desktop welcome message
 const helpButtonText = document.getElementById('helpButtonText');
 const settingsButtonText = document.getElementById('settingsButtonText');
 const settingsButton = document.getElementById('settingsButton');
@@ -110,45 +111,53 @@ const settingsModal = document.getElementById('settingsModal');
 const apiKeyInput = document.getElementById('apiKeyInput');
 const saveSettingsButton = document.getElementById('saveSettingsButton');
 const clearKeyButton = document.getElementById('clearKeyButton');
+const mobileSidebarHeaderTitle = document.getElementById('mobileSidebarHeaderTitle'); // Mobile menu title
+const hamburgerButton = document.querySelector('.hamburger');
+const sidebarElement = document.querySelector('.sidebar');
+
 
 // Initialize UI
 function initUI() {
-    appContainer.style.display = 'block';
-    welcomeTitle.textContent = translations[appLanguage].welcome;
+    // appContainer.style.display = 'block'; // Changed to flex in HTML/CSS
+    welcomeTitle.textContent = translations[appLanguage].welcome; // For loading screen
     chatBox.innerHTML = `<div class="loading-message">${translations[appLanguage].loading}</div>`;
-    
+
     setTimeout(() => {
         updateUIText();
-        chatBox.innerHTML = '';
+        chatBox.innerHTML = ''; // Clear "Loading your HR assistant..." from chatbox
         addBotMessage(translations[appLanguage].greeting);
         setTimeout(() => {
             showSuggestedQuestions();
-        }, 500);
+        }, 500); // Show suggestions after greeting
+
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 500);
-        animateUI();
-    }, 1000);
+            document.body.style.overflow = 'auto'; // Restore body scroll if needed
+            appContainer.style.display = 'flex'; // Show the app container (sidebar uses fixed, main-content flexes)
+            appContainer.style.opacity = '1';
+            animateUI(); // Start staggered animations
+        }, 500); // Duration of loading screen fade out
+    }, 1000); // Initial delay for loading screen content
 }
 
 // Update all UI text elements
 function updateUIText() {
     const lang = translations[appLanguage];
-    
+
     // Main chat area
     chatTitle.textContent = lang.title;
     userInput.placeholder = lang.placeholder;
     sendButton.textContent = lang.send;
-    
-    // Sidebar elements
-    sidebarTitle.textContent = lang.sidebarTitle;
+
+    // Sidebar elements (Desktop and expanded mobile)
+    sidebarTitle.textContent = lang.sidebarTitle; // For desktop main sidebar title
+    if (mobileSidebarHeaderTitle) mobileSidebarHeaderTitle.textContent = lang.mobileMenuTitle; // For mobile collapsed menu bar
     welcomeMessage.textContent = lang.welcomeMessage;
     helpButtonText.textContent = lang.helpButtonText;
     settingsButtonText.textContent = lang.settingsButtonText;
-    languageButton.textContent = lang.languageButton;
-    
+    languageButton.children[1].textContent = lang.languageButton; // Assuming icon is first child
+
     // Modal content
     document.getElementById('helpModalTitle').textContent = lang.helpTitle;
     document.getElementById('helpModalText').textContent = lang.helpText;
@@ -158,7 +167,7 @@ function updateUIText() {
     document.getElementById('helpModalItem3').textContent = lang.helpItem3;
     document.getElementById('helpModalItem4').textContent = lang.helpItem4;
     document.getElementById('helpModalLanguage').textContent = lang.helpLanguage;
-    
+
     // Settings modal
     document.getElementById('settingsModalTitle').textContent = lang.settingsTitle;
     document.getElementById('settingsModalText').textContent = lang.settingsText;
@@ -187,65 +196,86 @@ function showSuggestedQuestions() {
         questionBtn.addEventListener('click', () => {
             userInput.value = question;
             sendMessage();
+            // Optionally hide suggested questions after one is clicked
+            // if (questionsContainer.parentNode) {
+            //     questionsContainer.parentNode.removeChild(questionsContainer);
+            // }
         });
         questionsList.appendChild(questionBtn);
     });
 
     questionsContainer.appendChild(questionsList);
     chatBox.appendChild(questionsContainer);
-    setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to show them if chatbox is already full
+    setTimeout(() => { // Stagger animation
         questionsContainer.style.opacity = '1';
         questionsContainer.style.transform = 'translateY(0)';
     }, 10);
 }
 
-// Animate UI elements
+// Animate UI elements in sequence
 function animateUI() {
-    const elements = [
-        document.querySelector('.top-bar'),
-        document.querySelector('#chatTitle'),
-        document.querySelector('.chat-box'),
-        document.querySelector('.input-area')
+    const elementsToAnimate = [
+        { el: document.querySelector('.top-bar'), delay: 100 },
+        { el: document.querySelector('#chatTitle'), delay: 200 },
+        { el: document.querySelector('.chat-container'), delay: 300 },
+        { el: document.querySelector('.chat-box'), delay: 400 }, // chat-box itself
+        { el: document.querySelector('.input-area'), delay: 500 }
     ];
-    elements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 200);
+    elementsToAnimate.forEach(item => {
+        if (item.el) { // Check if element exists
+            setTimeout(() => {
+                item.el.classList.add('visible');
+            }, item.delay);
+        }
     });
+}
+
+// Function to close mobile sidebar if open
+function closeMobileSidebar() {
+    if (sidebarElement && hamburgerButton && window.innerWidth <= 768) {
+        sidebarElement.classList.remove('expanded');
+        hamburgerButton.setAttribute('aria-expanded', 'false');
+    }
 }
 
 // Switch between English and Spanish
 function switchLanguage() {
+    closeMobileSidebar(); // Close mobile menu if open
     appLanguage = appLanguage === 'english' ? 'spanish' : 'english';
     updateUIText();
-    chatBox.style.opacity = 0;
-    setTimeout(() => {
-        chatBox.innerHTML = '';
+    // chatBox.style.opacity = 0; // Let's re-evaluate this transition
+    // setTimeout(() => {
+        chatBox.innerHTML = ''; // Clear previous messages or greeting
         addBotMessage(translations[appLanguage].greeting);
-        chatBox.style.opacity = 1;
-        setTimeout(() => showSuggestedQuestions(), 500);
-    }, 300);
+        // chatBox.style.opacity = 1;
+        setTimeout(() => showSuggestedQuestions(), 500); // Show new suggestions
+    // }, 300);
 }
 
 // Help modal functions
 function openHelpModal() {
-    helpModal.style.display = 'block';
+    closeMobileSidebar();
+    helpModal.style.display = 'flex'; // Use flex for centering
+    document.body.classList.add('modal-open');
     setTimeout(() => {
         helpModal.classList.add('visible');
-    }, 10);
+    }, 10); // Short delay for transition
 }
 
 function closeHelpModal() {
     helpModal.classList.remove('visible');
+    document.body.classList.remove('modal-open');
     setTimeout(() => {
         helpModal.style.display = 'none';
-    }, 300);
+    }, 300); // Match CSS transition duration
 }
 
 // Settings modal functions
 function openSettingsModal() {
-    settingsModal.style.display = 'block';
+    closeMobileSidebar();
+    settingsModal.style.display = 'flex'; // Use flex for centering
+    document.body.classList.add('modal-open');
     setTimeout(() => {
         settingsModal.classList.add('visible');
     }, 10);
@@ -253,6 +283,7 @@ function openSettingsModal() {
 
 function closeSettingsModal() {
     settingsModal.classList.remove('visible');
+    document.body.classList.remove('modal-open');
     setTimeout(() => {
         settingsModal.style.display = 'none';
     }, 300);
@@ -261,16 +292,17 @@ function closeSettingsModal() {
 // Save API key
 function saveApiKey() {
     const apiKey = apiKeyInput.value.trim();
-    
+
     if (!apiKey) {
-        alert(translations[appLanguage].noQuestion.replace('question', 'API key'));
+        // Re-use noQuestion translation, but adapt it for API key context
+        alert(translations[appLanguage].noQuestion.replace(translations[appLanguage].placeholder.split(" ")[0].toLowerCase(), "API key"));
         return;
     }
-    
-    // Show loading state
+
+    const originalButtonText = saveSettingsButton.textContent;
     saveSettingsButton.disabled = true;
-    saveSettingsButton.textContent = translations[appLanguage].loading;
-    
+    saveSettingsButton.textContent = translations[appLanguage].typing.split("...")[0]; // "Generating..." or "Cargando..."
+
     fetch('/set_api_key', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -291,133 +323,172 @@ function saveApiKey() {
     })
     .finally(() => {
         saveSettingsButton.disabled = false;
-        saveSettingsButton.textContent = translations[appLanguage].saveSettings;
+        saveSettingsButton.textContent = originalButtonText;
     });
 }
 
 // Clear API key
 function clearApiKey() {
     apiKeyInput.value = '';
-    fetch('/set_api_key', {
+    // Consider a confirmation before clearing
+    fetch('/set_api_key', { // Assuming clearing means setting an empty key
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ api_key: '' })
+        body: JSON.stringify({ api_key: '' }) // Send empty string
     })
-    .then(() => {
-        alert('API key cleared'); // This alert might be better if localized too
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+             alert('Error clearing API key: ' + data.error); // Should be translated
+        } else {
+            alert(translations[appLanguage].settingsSaved.replace(translations[appLanguage].saveSettings, translations[appLanguage].clearKey)); // Crude re-use, better to have dedicated translation
+        }
     })
     .catch(error => {
         console.error('Error clearing API key:', error);
+        alert(translations[appLanguage].error);
     });
 }
 
-// Translation function
-function translateMessage(messageElement, targetLanguage) {
-    const messageContent = messageElement.querySelector('.message-text');
-    const currentText = messageContent.textContent;
-    
-    // Don't translate if already in the target language
-    // This check might need adjustment if appLanguage changes before translation completes or if targetLanguage is the current appLanguage
-    // if (targetLanguage === appLanguage) return; // Consider if this logic is always correct
 
-    // Show loading state
-    const originalText = messageContent.innerHTML; // Store innerHTML to preserve formatting
-    messageContent.innerHTML = `<div class="loading-translation">${translations[appLanguage].translating}</div>`;
-    
+// Translation function for messages
+function translateMessage(messageElement, targetLanguage) {
+    const messageTextElement = messageElement.querySelector('.message-text');
+    if (!messageTextElement) return;
+
+    const currentText = messageTextElement.dataset.originalText || messageTextElement.textContent; // Use original if already translated once
+    messageTextElement.dataset.originalText = currentText; // Store original text
+
+    const originalHTML = messageTextElement.innerHTML;
+    messageTextElement.innerHTML = `<div class="loading-translation">${translations[appLanguage].translating}</div>`;
+
+    // Manage translate button visibility/state
+    const translateButton = messageElement.querySelector('.translate-btn');
+    if (translateButton) translateButton.disabled = true;
+
+
     fetch('/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            text: currentText, // Send the plain text content for translation
+        body: JSON.stringify({
+            text: currentText,
             target_language: targetLanguage
         })
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            messageContent.innerHTML = originalText; // Restore original if error
+        if (data.error || !data.translated_text) {
+            messageTextElement.innerHTML = currentText; // Restore original text content
             console.error('Translation error:', data.error);
-            return;
+            // Optionally show an error to the user
+        } else {
+            messageTextElement.innerHTML = data.translated_text; // Set translated text
+            // Update button to allow translating back or to the other language
+            if (translateButton) {
+                const newTargetLang = targetLanguage === 'english' ? 'spanish' : 'english';
+                translateButton.innerHTML = newTargetLang === 'english' ? 'EN' : 'ES';
+                translateButton.title = `Translate to ${newTargetLang.charAt(0).toUpperCase() + newTargetLang.slice(1)}`;
+                // Update event listener to translate to the new target
+                translateButton.onclick = () => translateMessage(messageElement, newTargetLang);
+            }
         }
-        messageContent.innerHTML = data.translated_text || originalText; // Use translated or fallback to original
     })
     .catch(error => {
         console.error('Translation failed:', error);
-        messageContent.innerHTML = originalText; // Restore original on failure
+        messageTextElement.innerHTML = currentText; // Restore original text on network failure
+    })
+    .finally(() => {
+        if (translateButton) translateButton.disabled = false;
     });
 }
 
-// Message functions
+
+// Add Bot Message with Typing Effect
 function addBotMessage(message, specialEffect = true) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message bot-message';
-    messageElement.style.opacity = '0';
-    messageElement.style.transform = 'scaleY(0)';
-    messageElement.style.transformOrigin = 'top';
+    // Initial animation setup (opacity/transform handled by CSS if preferred)
+    // messageElement.style.opacity = '0';
+    // messageElement.style.transform = 'scaleY(0)';
+    // messageElement.style.transformOrigin = 'top';
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
     messageElement.appendChild(messageContent);
 
-    // Add translation button container
-    const translationContainer = document.createElement('div');
-    translationContainer.className = 'translation-buttons';
-    
-    const translateButton = document.createElement('button');
-    translateButton.className = 'translate-btn';
-    // Text of translate button should reflect the OTHER language
-    translateButton.innerHTML = appLanguage === 'english' ? 'ES' : 'EN'; 
-    translateButton.title = appLanguage === 'english' ? 'Translate to Spanish' : 'Translate to English';
-    
-    translateButton.addEventListener('click', () => {
-        // Determine target language based on current app language
-        const targetLanguageForTranslation = appLanguage === 'english' ? 'spanish' : 'english';
-        translateMessage(messageElement, targetLanguageForTranslation);
-    });
-    
-    translationContainer.appendChild(translateButton);
-    messageElement.appendChild(translationContainer);
+    // Add translation button container (only if not the initial greeting or simple messages)
+    if (message !== translations[appLanguage].greeting) { // Example condition
+        const translationContainer = document.createElement('div');
+        translationContainer.className = 'translation-buttons';
+
+        const translateButton = document.createElement('button');
+        translateButton.className = 'translate-btn';
+        const targetLangForButton = appLanguage === 'english' ? 'spanish' : 'english';
+        translateButton.innerHTML = targetLangForButton === 'english' ? 'EN' : 'ES';
+        translateButton.title = `Translate to ${targetLangForButton === 'english' ? 'English' : 'Spanish'}`;
+
+        translateButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent message click if any
+            const currentMessageText = messageElement.querySelector('.message-text').textContent;
+            // Determine target language based on current app language (or button text)
+            const langToTranslateTo = translateButton.innerHTML === 'ES' ? 'spanish' : 'english';
+            translateMessage(messageElement, langToTranslateTo);
+        });
+
+        translationContainer.appendChild(translateButton);
+        messageElement.appendChild(translationContainer);
+    }
 
     chatBox.appendChild(messageElement);
 
+    // Animate message appearance
     setTimeout(() => {
-        messageElement.style.opacity = '1';
-        messageElement.style.transform = 'scaleY(1)';
+        // messageElement.style.opacity = '1';
+        // messageElement.style.transform = 'scaleY(1)';
+
         let i = 0;
-        const speed = Math.max(5, Math.min(15 - (message.length / 30), 5)); // Adjusted typing speed calculation
-        const typingEffect = () => {
+        // Adjusted typing speed: faster for shorter messages, slightly slower for very long ones.
+        const baseSpeed = 20; // Base speed
+        const lengthFactor = Math.max(0, Math.min(15, message.length / 20)); // Adjust factor as needed
+        const speed = baseSpeed - lengthFactor;
+
+
+        function typingEffect() {
             if (i < message.length) {
-                messageContent.innerHTML += message.charAt(i++); // Use innerHTML to render potential HTML entities
+                messageContent.innerHTML += message.charAt(i++);
+                chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll while typing
                 setTimeout(typingEffect, speed);
-                const isNearBottom = chatBox.scrollHeight - chatBox.clientHeight - chatBox.scrollTop < 150;
-                if (isNearBottom) {
-                    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-                }
             } else {
-                messageElement.classList.add('reveal');
-                if (specialEffect && message.length > 80) { // Example condition for pulse effect
-                    messageElement.classList.add('pulse');
-                    setTimeout(() => messageElement.classList.remove('pulse'), 1000);
+                messageElement.classList.add('reveal'); // Can be used for further CSS animation
+                // Example special effect (pulse)
+                if (specialEffect && message.length > 80) {
+                    // messageElement.classList.add('pulse');
+                    // setTimeout(() => messageElement.classList.remove('pulse'), 1000);
                 }
+                chatBox.scrollTop = chatBox.scrollHeight; // Final scroll after message is complete
             }
-        };
-        setTimeout(typingEffect, 200); // Initial delay before typing starts
-    }, 10); // Initial delay for message element to appear
-    return messageElement; // Return for potential future manipulation
+        }
+        typingEffect(); // Start typing effect immediately after slight delay
+    }, 100); // Delay for message element to be in DOM for transitions
+
+    return messageElement;
 }
+
 
 function addUserMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message user-message';
-    messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateX(20px)';
+    // messageElement.style.opacity = '0';
+    // messageElement.style.transform = 'translateX(20px)';
     messageElement.innerHTML = message.replace(/\n/g, '<br>'); // Preserve line breaks
     chatBox.appendChild(messageElement);
-    setTimeout(() => {
-        messageElement.style.opacity = '1';
-        messageElement.style.transform = 'translateX(0)';
+
+    // Animate message appearance
+    // setTimeout(() => {
+        // messageElement.style.opacity = '1';
+        // messageElement.style.transform = 'translateX(0)';
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-    }, 10);
+    // }, 10);
 }
 
 // Send message to server
@@ -429,12 +500,23 @@ function sendMessage() {
     }
     addUserMessage(question);
     userInput.value = '';
-    sendButton.disabled = true; // Disable send button after sending
-    sendButton.style.opacity = '0.7';
+    sendButton.disabled = true; // Disable send button
+    // sendButton.style.opacity = '0.7'; // Managed by CSS :disabled state
+
+    // Remove suggested questions if they are still visible
+    /*const suggestedContainer = chatBox.querySelector('.suggested-questions');
+    if (suggestedContainer) {
+        suggestedContainer.style.opacity = '0';
+        setTimeout(() => {
+            if (suggestedContainer.parentNode) {
+                 suggestedContainer.parentNode.removeChild(suggestedContainer);
+            }
+        }, 300);
+    }*/
 
 
     const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'message bot-message typing-indicator';
+    typingIndicator.className = 'message bot-message typing-indicator'; // Use message and bot-message for consistent styling
     typingIndicator.innerHTML = `
         <div class="typing-dots"><span></span><span></span><span></span></div>
         <div class="typing-text">${translations[appLanguage].typing}</div>
@@ -442,176 +524,186 @@ function sendMessage() {
     chatBox.appendChild(typingIndicator);
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message bot-message streaming';
+    const streamingMessageElement = document.createElement('div');
+    streamingMessageElement.className = 'message bot-message streaming'; // Add streaming class
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
-    messageElement.appendChild(messageContent);
-    // Do not append to chatBox yet, append after typing indicator is removed or stream starts
+    streamingMessageElement.appendChild(messageContent);
+    // Will be added to chatBox once the stream starts
+
 
     fetch('/ask', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream'
+        },
         body: JSON.stringify({ question: question, language: appLanguage })
     })
     .then(response => {
-        if (!response.ok) { // Check for HTTP errors like 4xx, 5xx
-            // Attempt to parse error from JSON response
-            return response.json().then(errData => {
+        if (typingIndicator.parentNode === chatBox) { // Remove typing indicator earlier
+            chatBox.removeChild(typingIndicator);
+        }
+        if (!response.ok) {
+            return response.json().then(errData => { // Try to parse JSON error
                 throw new Error(errData.error || `HTTP error! status: ${response.status}`);
-            }).catch(() => {
-                // If response is not JSON or parsing fails
-                throw new Error(`HTTP error! status: ${response.status}`);
+            }).catch(() => { // Fallback if not JSON
+                throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
             });
         }
-        chatBox.removeChild(typingIndicator); // Remove typing indicator once stream starts
-        chatBox.appendChild(messageElement);   // Add the streaming message element
+
+        chatBox.appendChild(streamingMessageElement); // Add streaming message element now
+        chatBox.scrollTop = chatBox.scrollHeight;
+
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let partialData = '';
 
         function readStream() {
-            return reader.read().then(({ done, value }) => {
+            reader.read().then(({ done, value }) => {
                 if (done) {
-                    messageElement.classList.remove('streaming');
-                    
-                    // Add translation button to the completed message
+                    streamingMessageElement.classList.remove('streaming'); // Remove streaming class
+                     // Add translation button to the completed streamed message
                     const translationContainer = document.createElement('div');
-                    translationContainer.className = 'translation-buttons';
-                    
+                    translationContainer.className = 'translation-buttons persistent'; // Add persistent for touch
+
                     const translateButton = document.createElement('button');
                     translateButton.className = 'translate-btn';
-                    translateButton.innerHTML = appLanguage === 'english' ? 'ES' : 'EN';
-                    translateButton.title = appLanguage === 'english' ? 'Translate to Spanish' : 'Translate to English';
+                    const targetLangForButton = appLanguage === 'english' ? 'spanish' : 'english';
+                    translateButton.innerHTML = targetLangForButton === 'english' ? 'EN' : 'ES';
+                    translateButton.title = `Translate to ${targetLangForButton === 'english' ? 'English' : 'Spanish'}`;
                     
-                    translateButton.addEventListener('click', () => {
-                        const targetLanguage = appLanguage === 'english' ? 'spanish' : 'english';
-                        translateMessage(messageElement, targetLanguage);
+                    translateButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const langToTranslateTo = translateButton.innerHTML === 'ES' ? 'spanish' : 'english';
+                        translateMessage(streamingMessageElement, langToTranslateTo);
                     });
                     
                     translationContainer.appendChild(translateButton);
-                    messageElement.appendChild(translationContainer);
-                    chatBox.scrollTop = chatBox.scrollHeight; // Scroll after adding button
+                    streamingMessageElement.appendChild(translationContainer);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    sendButton.disabled = false; // Re-enable send button
                     return;
                 }
+
                 partialData += decoder.decode(value, { stream: true });
-                const lines = partialData.split('\n\n');
-                partialData = lines.pop(); // Keep incomplete line for next chunk
-                
+                const lines = partialData.split('\n\n'); // SSE messages are separated by double newlines
+                partialData = lines.pop(); // Keep incomplete line for the next chunk
+
                 lines.forEach(line => {
                     if (line.startsWith('data: ')) {
                         try {
-                            const data = JSON.parse(line.substring(6));
+                            const jsonData = line.substring(6); // Remove "data: " prefix
+                            if (jsonData.trim() === "[DONE]") { // Handle a potential [DONE] signal if sent separately
+                                // This part might not be needed if [DONE] is part of the last JSON object
+                                return;
+                            }
+                            const data = JSON.parse(jsonData);
                             if (data.token) {
                                 messageContent.innerHTML += data.token; // Append token
                                 chatBox.scrollTop = chatBox.scrollHeight;
                             }
-                            if (data.error) { // Handle server-sent errors during stream
+                            if (data.error) {
                                 console.error("Server error during stream:", data.error);
-                                messageContent.innerHTML += `<br><span style="color:red;">Error: ${data.error}</span>`;
+                                messageContent.innerHTML += `<br><span class="stream-error">Error: ${data.error}</span>`;
                                 chatBox.scrollTop = chatBox.scrollHeight;
-                                // Optionally stop processing further stream if error is critical
                             }
                         } catch (e) {
-                            console.error("Error parsing stream data:", e, "Line:", line);
+                            console.error("Error parsing stream data:", e, "Line:", line, "Full partialData:", lines.join('\n\n') + '\n\n' + partialData);
+                            // Potentially append raw problematic line if debugging
+                            // messageContent.innerHTML += `<br><span class="stream-error">Parse error on: ${line}</span>`;
                         }
                     }
                 });
-                return readStream();
+                return readStream(); // Continue reading
+            }).catch(streamError => { // Catch errors from reader.read() or within the promise chain
+                 console.error('Stream reading error:', streamError);
+                 if (typingIndicator.parentNode === chatBox) chatBox.removeChild(typingIndicator);
+                 if (streamingMessageElement.parentNode === chatBox) chatBox.removeChild(streamingMessageElement);
+                 addBotMessage(`${translations[appLanguage].error}: Streaming failed.`, false);
+                 sendButton.disabled = false; // Re-enable send button
             });
         }
         return readStream();
     })
-    .catch(error => {
-        console.error('Error:', error);
-        if (typingIndicator.parentNode === chatBox) {
-            chatBox.removeChild(typingIndicator);
-        }
-        if (messageElement.parentNode === chatBox) { // If message element was added, remove it on error
-             chatBox.removeChild(messageElement);
-        }
+    .catch(error => { // Catch errors from fetch() itself or non-2xx responses not handled above
+        console.error('Fetch/Ask Error:', error);
+        if (typingIndicator.parentNode === chatBox) chatBox.removeChild(typingIndicator);
+        // Check if streamingMessageElement was added before removing
+        if (streamingMessageElement.parentNode === chatBox) chatBox.removeChild(streamingMessageElement);
         addBotMessage(`${translations[appLanguage].error}: ${error.message}`, false);
+        sendButton.disabled = false; // Re-enable send button
     });
 }
+
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initUI(); // Initializes UI, language, and initial bot message
 
-    // Add event listeners to all close buttons in modals
+    // Modal close buttons
     document.querySelectorAll('.close-modal').forEach(button => {
         button.addEventListener('click', () => {
             const modal = button.closest('.modal');
             if (modal) {
-                if (modal.id === 'helpModal') {
-                    closeHelpModal();
-                } else if (modal.id === 'settingsModal') {
-                    closeSettingsModal();
-                }
+                if (modal.id === 'helpModal') closeHelpModal();
+                else if (modal.id === 'settingsModal') closeSettingsModal();
             }
         });
     });
     
-    // Initial loading animation and UI setup
-    setTimeout(() => {
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            appContainer.style.display = 'flex'; // Changed to flex for sidebar layout
-            setTimeout(() => {
-                appContainer.style.opacity = '1';
-                document.querySelector('.top-bar').classList.add('visible');
-                document.querySelector('.chat-container').classList.add('visible');
-                document.querySelector('#chatTitle').classList.add('visible');
-                document.querySelector('.chat-box').classList.add('visible');
-                document.querySelector('.input-area').classList.add('visible');
-            }, 100); // Reduced delay for quicker appearance after loading
-        }, 500);
-    }, 1000); // Initial loading screen duration
+    // Hamburger menu toggle
+    if (hamburgerButton && sidebarElement) {
+        hamburgerButton.addEventListener('click', () => {
+            sidebarElement.classList.toggle('expanded');
+            const isExpanded = sidebarElement.classList.contains('expanded');
+            hamburgerButton.setAttribute('aria-expanded', isExpanded.toString());
+        });
+    }
 
-    userInput.addEventListener('focus', () => {
-        userInput.parentElement.style.boxShadow = '0 0 0 2px rgba(47, 85, 209, 0.3)'; // Adjusted color to match theme
-    });
-    userInput.addEventListener('blur', () => {
-        userInput.parentElement.style.boxShadow = 'none';
-    });
+
     userInput.addEventListener('input', () => {
         sendButton.disabled = userInput.value.trim().length === 0;
-        sendButton.style.opacity = sendButton.disabled ? '0.7' : '1';
     });
+    sendButton.disabled = true; // Initially disable if input is empty
 
-    // Other general event listeners
+    // Send message
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, allow Shift+Enter for newline
-            e.preventDefault(); // Prevent default Enter behavior (like newline in some cases)
-            sendMessage();
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!sendButton.disabled) { // Check if button is enabled
+                sendMessage();
+            }
         }
     });
+
+    // Sidebar buttons
     languageButton.addEventListener('click', switchLanguage);
     helpButton.addEventListener('click', openHelpModal);
     settingsButton.addEventListener('click', openSettingsModal);
+
+    // Settings modal buttons
     saveSettingsButton.addEventListener('click', saveApiKey);
     clearKeyButton.addEventListener('click', clearApiKey);
-    // closeModal.addEventListener('click', closeHelpModal); // REMOVED this - handled by querySelectorAll loop
 
-    // Close modals when clicking outside their content or pressing Escape
+    // Close modals on backdrop click or Escape key
     window.addEventListener('click', (e) => {
-        if (e.target === helpModal) { // If click is on the modal backdrop itself
+        if (e.target === helpModal && helpModal.classList.contains('visible')) {
             closeHelpModal();
         }
-        if (e.target === settingsModal) { // If click is on the modal backdrop itself
+        if (e.target === settingsModal && settingsModal.classList.contains('visible')) {
             closeSettingsModal();
         }
     });
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (helpModal.style.display === 'block' && helpModal.classList.contains('visible')) {
+            if (helpModal.style.display !== 'none' && helpModal.classList.contains('visible')) {
                 closeHelpModal();
             }
-            if (settingsModal.style.display === 'block' && settingsModal.classList.contains('visible')) {
+            if (settingsModal.style.display !== 'none' && settingsModal.classList.contains('visible')) {
                 closeSettingsModal();
             }
         }
