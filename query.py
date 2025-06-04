@@ -10,7 +10,7 @@ class HRAssistant:
     def __init__(self):
         # Configuration
         self.DB_DIR = "./chroma_db3"
-        self.OPENAI_MODEL = "gpt-3.5-turbo-0125"
+        self.OPENAI_MODEL = "gpt-4.1-mini-2025-04-14"
         self.OPENAI_EMBEDDING_MODEL = "text-embedding-3-large"
         self.collection_name = "RH_A"
 
