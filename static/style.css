@@ -145,28 +145,40 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     opacity: 0; /* Animation */
 }
 
+/* --- Suggested New Styles --- */
+
+/* Adjusted general .message style for consistency */
 .message {
-    margin-bottom: 12px;
-    padding: 12px 18px;
-    border-radius: 8px;
-    max-width: 80%;
-    min-width: 30%;
-    line-height: 1.5;
-    font-size: 0.95rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;          /* Slightly increased spacing between messages */
+    padding: 12px 18px;           /* Padding inside the bubble */
+    border-radius: 18px;          /* Default rounding - specific corners can be adjusted for tails */
+    max-width: 75%;               /* Max width of the bubble, allowing some breathing room */
+    line-height: 1.6;             /* Improved line spacing for readability */
+    font-size: 0.95rem;           /* Existing font size is good */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* A slightly softer base shadow */
     word-wrap: break-word;
     flex-shrink: 0;
-    position: relative; /* For translation buttons */
+    position: relative;           /* Useful for potential future elements like timestamps */
+    /* min-width: initial; */     /* Removed to allow bubbles to size to content naturally */
 }
 
+/* New .user-message style */
 .user-message {
-    background-color: #f0f7ff;
-    margin-left: auto;
-    margin-right: 0;
-    border-bottom-right-radius: 4px;
-    color: #333;
-    border: 1px solid #e3e3e3;
-    align-self: flex-end;
+    background-color: #007bff;    /* A common, vibrant blue for user messages */
+    color: white;                 /* White text for excellent contrast on the blue background */
+    
+    margin-left: auto;            /* Aligns message to the right */
+    margin-right: 5px;            /* Small margin from the very edge of the chat-box (optional) */
+    
+    /* Creates a more defined "tail" or speech bubble effect on the bottom-right */
+    border-radius: 18px 18px 6px 18px; 
+    
+    border: none;                 /* No border for a cleaner, modern flat look */
+    
+    /* A slightly more pronounced but soft shadow, with a hint of the blue color */
+    box-shadow: 0 3px 8px rgba(0, 105, 217, 0.15); 
+    
+    align-self: flex-end;         /* Ensures the bubble aligns to the right in the flex container */
 }
 
 .bot-message {
@@ -494,6 +506,15 @@ html {
     flex-grow: 1; /* Allow buttons to grow if space allows */
     min-width: 150px; /* Minimum width before wrapping */
 }
+
+.typing-indicator-inline {
+    display: flex; /* Aligns dots and text side-by-side */
+    align-items: center; /* Vertically aligns them */
+    /* You can add a little padding if needed, e.g., padding: 5px 0; */
+}
+
+/* The existing styles for .typing-dots, .typing-dots span, and .typing-text
+   should still work as they define the appearance of the dots and text itself. */
 
 
 .suggested-question:hover {
