@@ -9,7 +9,7 @@ const translations = {
         send: "Send",
         greeting: "Hello! I'm your HR Assistant. How can I help you today? 🤖",
         noQuestion: "Please enter a question",
-        error: "❌ Error processing your question, please insert your API Key",
+        error: "❌ Error processing your question, please enter your API Key, if you don't have it, go to <a href='https://auth.openai.com/log-in' target='_blank'>https://auth.openai.com/log-in</a>",
         languageButton: "Español",
         loading: "Loading your HR assistant...",
         welcome: "Welcome to HR Assistant", // For loading screen
@@ -45,7 +45,7 @@ const translations = {
         send: "Enviar",
         greeting: "¡Hola! Soy tu asistente de Recursos Humanos. ¿En qué puedo ayudarte hoy? 🤖",
         noQuestion: "Por favor ingresa una pregunta",
-        error: "❌ Error al procesar tu pregunta, porfavor ingresa tu API Key",
+        error: "❌ Error al procesar tu pregunta, porfavor ingresa tu API Key, si no lo tienes ingresa a <a href='https://auth.openai.com/log-in' target='_blank'>https://auth.openai.com/log-in</a>",
         languageButton: "English",
         loading: "Cargando tu asistente de RH...",
         welcome: "Bienvenido al Asistente de RH", // For loading screen
@@ -407,17 +407,13 @@ function translateMessage(messageElement, targetLanguage) {
 function addBotMessage(message, specialEffect = true) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message bot-message';
-    // Initial animation setup (opacity/transform handled by CSS if preferred)
-    // messageElement.style.opacity = '0';
-    // messageElement.style.transform = 'scaleY(0)';
-    // messageElement.style.transformOrigin = 'top';
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-text';
     messageElement.appendChild(messageContent);
 
     // Add translation button container (only if not the initial greeting or simple messages)
-    if (message !== translations[appLanguage].greeting) { // Example condition
+    if (message !== translations[appLanguage].greeting && specialEffect !== false) { // Also check specialEffect to avoid adding to HTML error messages that won't type
         const translationContainer = document.createElement('div');
         translationContainer.className = 'translation-buttons';
 
@@ -429,7 +425,6 @@ function addBotMessage(message, specialEffect = true) {
 
         translateButton.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent message click if any
-            const currentMessageText = messageElement.querySelector('.message-text').textContent;
             // Determine target language based on current app language (or button text)
             const langToTranslateTo = translateButton.innerHTML === 'ES' ? 'spanish' : 'english';
             translateMessage(messageElement, langToTranslateTo);
@@ -443,32 +438,36 @@ function addBotMessage(message, specialEffect = true) {
 
     // Animate message appearance
     setTimeout(() => {
-        // messageElement.style.opacity = '1';
-        // messageElement.style.transform = 'scaleY(1)';
+        // If specialEffect is explicitly false, assume the message might contain HTML
+        // (like your error message with a link) and should be rendered directly.
+        if (specialEffect === false) {
+            messageContent.innerHTML = message; // Render HTML directly
+            chatBox.scrollTop = chatBox.scrollHeight;
+            messageElement.classList.add('reveal'); // Add any reveal class if used
+        } else {
+            // Original typing effect for normal messages
+            let i = 0;
+            const baseSpeed = 20; // Base speed
+            const lengthFactor = Math.max(0, Math.min(15, message.length / 20)); // Adjust factor as needed
+            const speed = baseSpeed - lengthFactor;
 
-        let i = 0;
-        // Adjusted typing speed: faster for shorter messages, slightly slower for very long ones.
-        const baseSpeed = 20; // Base speed
-        const lengthFactor = Math.max(0, Math.min(15, message.length / 20)); // Adjust factor as needed
-        const speed = baseSpeed - lengthFactor;
-
-
-        function typingEffect() {
-            if (i < message.length) {
-                messageContent.innerHTML += message.charAt(i++);
-                chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll while typing
-                setTimeout(typingEffect, speed);
-            } else {
-                messageElement.classList.add('reveal'); // Can be used for further CSS animation
-                // Example special effect (pulse)
-                if (specialEffect && message.length > 80) {
-                    // messageElement.classList.add('pulse');
-                    // setTimeout(() => messageElement.classList.remove('pulse'), 1000);
+            function typingEffect() {
+                if (i < message.length) {
+                    messageContent.innerHTML += message.charAt(i++);
+                    chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll while typing
+                    setTimeout(typingEffect, speed);
+                } else {
+                    messageElement.classList.add('reveal'); // Can be used for further CSS animation
+                    // Example special effect (pulse)
+                    // if (specialEffect && message.length > 80) { // Check if specialEffect is true for the pulse
+                    //     messageElement.classList.add('pulse');
+                    //     setTimeout(() => messageElement.classList.remove('pulse'), 1000);
+                    // }
+                    chatBox.scrollTop = chatBox.scrollHeight; // Final scroll after message is complete
                 }
-                chatBox.scrollTop = chatBox.scrollHeight; // Final scroll after message is complete
             }
+            typingEffect(); // Start typing effect
         }
-        typingEffect(); // Start typing effect immediately after slight delay
     }, 100); // Delay for message element to be in DOM for transitions
 
     return messageElement;
@@ -500,37 +499,27 @@ function sendMessage() {
     }
     addUserMessage(question);
     userInput.value = '';
-    sendButton.disabled = true; // Disable send button
-    // sendButton.style.opacity = '0.7'; // Managed by CSS :disabled state
+    sendButton.disabled = true;
 
-    // Remove suggested questions if they are still visible
-    /*const suggestedContainer = chatBox.querySelector('.suggested-questions');
-    if (suggestedContainer) {
-        suggestedContainer.style.opacity = '0';
-        setTimeout(() => {
-            if (suggestedContainer.parentNode) {
-                 suggestedContainer.parentNode.removeChild(suggestedContainer);
-            }
-        }, 300);
-    }*/
+    // 1. Create the single bot message element.
+    // This element will first show "typing..." and then the streamed response.
+    const botResponseContainer = document.createElement('div');
+    botResponseContainer.className = 'message bot-message'; // Basic bot message style
 
+    const messageTextElement = document.createElement('div');
+    messageTextElement.className = 'message-text'; // Container for the actual text content
 
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'message bot-message typing-indicator'; // Use message and bot-message for consistent styling
-    typingIndicator.innerHTML = `
-        <div class="typing-dots"><span></span><span></span><span></span></div>
-        <div class="typing-text">${translations[appLanguage].typing}</div>
+    // 2. Set initial content to the "typing indicator" (dots and text).
+    // We'll use a new class 'typing-indicator-inline' for the inner div.
+    messageTextElement.innerHTML = `
+        <div class="typing-indicator-inline">
+            <div class="typing-dots"><span></span><span></span><span></span></div>
+            <div class="typing-text">${translations[appLanguage].typing}</div>
+        </div>
     `;
-    chatBox.appendChild(typingIndicator);
+    botResponseContainer.appendChild(messageTextElement);
+    chatBox.appendChild(botResponseContainer);
     chatBox.scrollTop = chatBox.scrollHeight;
-
-    const streamingMessageElement = document.createElement('div');
-    streamingMessageElement.className = 'message bot-message streaming'; // Add streaming class
-    const messageContent = document.createElement('div');
-    messageContent.className = 'message-text';
-    streamingMessageElement.appendChild(messageContent);
-    // Will be added to chatBox once the stream starts
-
 
     fetch('/ask', {
         method: 'POST',
@@ -541,20 +530,22 @@ function sendMessage() {
         body: JSON.stringify({ question: question, language: appLanguage })
     })
     .then(response => {
-        if (typingIndicator.parentNode === chatBox) { // Remove typing indicator earlier
-            chatBox.removeChild(typingIndicator);
-        }
+        // We will now modify botResponseContainer directly, instead of removing a separate indicator.
         if (!response.ok) {
-            return response.json().then(errData => { // Try to parse JSON error
+            // If an error occurs before the stream starts, remove the placeholder and show an error.
+            if (botResponseContainer.parentNode === chatBox) {
+                chatBox.removeChild(botResponseContainer);
+            }
+            return response.json().then(errData => {
                 throw new Error(errData.error || `HTTP error! status: ${response.status}`);
             }).catch(() => { // Fallback if not JSON
                 throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
             });
         }
 
-        chatBox.appendChild(streamingMessageElement); // Add streaming message element now
-        chatBox.scrollTop = chatBox.scrollHeight;
-
+        // 3. Clear the "typing..." content from messageTextElement and prepare for streaming.
+        messageTextElement.innerHTML = ''; // Clear the typing indicator dots and text
+        botResponseContainer.classList.add('streaming'); // Add streaming class for the caret to the main container
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -563,10 +554,11 @@ function sendMessage() {
         function readStream() {
             reader.read().then(({ done, value }) => {
                 if (done) {
-                    streamingMessageElement.classList.remove('streaming'); // Remove streaming class
-                     // Add translation button to the completed streamed message
+                    botResponseContainer.classList.remove('streaming'); // Remove caret animation
+
+                    // Add translation button to the completed streamed message
                     const translationContainer = document.createElement('div');
-                    translationContainer.className = 'translation-buttons persistent'; // Add persistent for touch
+                    translationContainer.className = 'translation-buttons persistent';
 
                     const translateButton = document.createElement('button');
                     translateButton.className = 'translate-btn';
@@ -577,63 +569,64 @@ function sendMessage() {
                     translateButton.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const langToTranslateTo = translateButton.innerHTML === 'ES' ? 'spanish' : 'english';
-                        translateMessage(streamingMessageElement, langToTranslateTo);
+                        // Pass botResponseContainer as it's the main message element holding messageTextElement
+                        translateMessage(botResponseContainer, langToTranslateTo);
                     });
                     
                     translationContainer.appendChild(translateButton);
-                    streamingMessageElement.appendChild(translationContainer);
+                    // Append to botResponseContainer, which is the div.message.bot-message
+                    botResponseContainer.appendChild(translationContainer); 
                     chatBox.scrollTop = chatBox.scrollHeight;
                     sendButton.disabled = false; // Re-enable send button
                     return;
                 }
 
                 partialData += decoder.decode(value, { stream: true });
-                const lines = partialData.split('\n\n'); // SSE messages are separated by double newlines
-                partialData = lines.pop(); // Keep incomplete line for the next chunk
+                const lines = partialData.split('\n\n');
+                partialData = lines.pop(); 
 
                 lines.forEach(line => {
                     if (line.startsWith('data: ')) {
                         try {
-                            const jsonData = line.substring(6); // Remove "data: " prefix
-                            if (jsonData.trim() === "[DONE]") { // Handle a potential [DONE] signal if sent separately
-                                // This part might not be needed if [DONE] is part of the last JSON object
+                            const jsonData = line.substring(6); 
+                            if (jsonData.trim() === "[DONE]") {
                                 return;
                             }
                             const data = JSON.parse(jsonData);
                             if (data.token) {
-                                messageContent.innerHTML += data.token; // Append token
+                                messageTextElement.innerHTML += data.token; // Stream into messageTextElement
                                 chatBox.scrollTop = chatBox.scrollHeight;
                             }
                             if (data.error) {
                                 console.error("Server error during stream:", data.error);
-                                messageContent.innerHTML += `<br><span class="stream-error">Error: ${data.error}</span>`;
+                                messageTextElement.innerHTML += `<br><span class="stream-error">Error: ${data.error}</span>`;
                                 chatBox.scrollTop = chatBox.scrollHeight;
                             }
                         } catch (e) {
-                            console.error("Error parsing stream data:", e, "Line:", line, "Full partialData:", lines.join('\n\n') + '\n\n' + partialData);
-                            // Potentially append raw problematic line if debugging
-                            // messageContent.innerHTML += `<br><span class="stream-error">Parse error on: ${line}</span>`;
+                            console.error("Error parsing stream data:", e, "Line:", line);
                         }
                     }
                 });
-                return readStream(); // Continue reading
-            }).catch(streamError => { // Catch errors from reader.read() or within the promise chain
+                return readStream(); 
+            }).catch(streamError => { 
                  console.error('Stream reading error:', streamError);
-                 if (typingIndicator.parentNode === chatBox) chatBox.removeChild(typingIndicator);
-                 if (streamingMessageElement.parentNode === chatBox) chatBox.removeChild(streamingMessageElement);
+                 if (botResponseContainer.parentNode === chatBox) { // Remove the placeholder on error
+                     chatBox.removeChild(botResponseContainer);
+                 }
                  addBotMessage(`${translations[appLanguage].error}: Streaming failed.`, false);
-                 sendButton.disabled = false; // Re-enable send button
+                 sendButton.disabled = false; 
             });
         }
         return readStream();
     })
-    .catch(error => { // Catch errors from fetch() itself or non-2xx responses not handled above
+    .catch(error => { 
         console.error('Fetch/Ask Error:', error);
-        if (typingIndicator.parentNode === chatBox) chatBox.removeChild(typingIndicator);
-        // Check if streamingMessageElement was added before removing
-        if (streamingMessageElement.parentNode === chatBox) chatBox.removeChild(streamingMessageElement);
+        // Ensure placeholder is removed if it was added and an error occurred before/during fetch
+        if (botResponseContainer && botResponseContainer.parentNode === chatBox) {
+            chatBox.removeChild(botResponseContainer);
+        }
         addBotMessage(`${translations[appLanguage].error}: ${error.message}`, false);
-        sendButton.disabled = false; // Re-enable send button
+        sendButton.disabled = false; 
     });
 }
 
