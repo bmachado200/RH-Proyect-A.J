@@ -5,16 +5,22 @@ body {
     padding: 0;
     background-color: #f5f5f5;
     height: 100vh;
+    overflow: hidden; /* Prevent scrollbars from initial loading screen */
+}
+
+body.modal-open { /* Added to prevent background scroll when modal is open */
     overflow: hidden;
 }
 
 #appContainer {
-    display: flex;
+    display: flex; /* For desktop: sidebar + main content */
     height: 100vh;
     width: 100%;
+    opacity: 0; /* Initially hidden, JS will fade in */
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* Sidebar Styles */
+/* Sidebar Styles (Desktop) */
 .sidebar {
     width: 250px;
     background-color: #2f55d1;
@@ -25,12 +31,15 @@ body {
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
     height: 100vh;
-    position: fixed;
+    position: fixed; /* Default fixed for desktop, will be overridden for mobile */
     left: 0;
     top: 0;
-    z-index: 10;
+    z-index: 100; /* Ensure sidebar is above other elements if needed */
 }
 
+.mobile-header { /* Hidden on desktop */
+    display: none;
+}
 
 .sidebar-header {
     padding: 0 20px 20px;
@@ -75,6 +84,8 @@ body {
 .sidebar-button .icon {
     margin-right: 10px;
     font-size: 1.1rem;
+    width: 24px; /* Ensure consistent icon spacing */
+    text-align: center;
 }
 
 .sidebar-footer {
@@ -89,9 +100,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-left: 250px; /* Match sidebar width */
+    margin-left: 250px; /* Match desktop sidebar width */
     height: 100vh;
-    overflow: auto;
+    overflow: auto; /* Allow main content to scroll */
 }
 
 .top-bar {
@@ -100,13 +111,15 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 5;
+    z-index: 50; /* Below sidebar but above chat content */
+    opacity: 0; transform: translateY(-20px); /* Animation */
 }
 
 #chatTitle {
     margin: 0;
     color: #2f55d1;
     font-size: 1.3rem;
+    opacity: 0; transform: translateY(-10px); /* Animation */
 }
 
 .chat-container {
@@ -117,7 +130,8 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin: 20px;
-    min-height: 0;
+    min-height: 0; /* Important for flex child */
+    opacity: 0; transform: translateY(20px); /* Animation */
 }
 
 .chat-box {
@@ -128,6 +142,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    opacity: 0; /* Animation */
 }
 
 .message {
@@ -141,6 +156,7 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     word-wrap: break-word;
     flex-shrink: 0;
+    position: relative; /* For translation buttons */
 }
 
 .user-message {
@@ -163,6 +179,7 @@ body {
     color: #333;
     align-self: flex-start;
     padding: 15px 20px;
+    padding-right: 50px; /* Ensure space for translation button */
 }
 
 .input-area {
@@ -170,23 +187,25 @@ body {
     padding: 15px;
     background-color: white;
     border-top: 1px solid #eee;
+    opacity: 0; transform: translateY(10px); /* Animation */
 }
 
-input {
+#userInput { /* Changed from 'input' to be more specific */
     flex: 1;
     padding: 12px 18px;
     border: 1px solid #ddd;
     border-radius: 6px;
     outline: none;
     font-size: 0.95rem;
-    transition: border 0.3s;
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
-input:focus {
+#userInput:focus {
     border-color: #2f55d1;
+    box-shadow: 0 0 0 2px rgba(47, 85, 209, 0.3);
 }
 
-button {
+#sendButton { /* Changed from 'button' to be more specific */
     background-color: #2f55d1;
     color: white;
     border: none;
@@ -199,26 +218,39 @@ button {
     transition: all 0.2s;
 }
 
-button:hover {
-    background-color: #d35400;
+#sendButton:hover:not(:disabled) {
+    background-color: #d35400; /* Original hover color */
     transform: translateY(-1px);
 }
 
-button:active {
+#sendButton:active:not(:disabled) {
     transform: translateY(0);
 }
 
+#sendButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
 .typing-indicator {
-    display: inline-flex;
+    display: inline-flex; /* Changed from inline-flex to flex for easier centering */
     padding: 10px 16px;
     background-color: white;
     border-radius: 8px;
     margin-bottom: 12px;
     align-items: center;
     border: 1px solid #f1f1f1;
+    align-self: flex-start; /* Match bot message alignment */
+}
+.typing-indicator .typing-text {
+    margin-left: 8px;
+    font-size: 0.9em;
+    color: #555;
 }
 
-.typing-indicator span {
+.typing-dots span { /* Renamed from .typing-indicator span */
     height: 8px;
     width: 8px;
     background-color: #2f55d1;
@@ -228,7 +260,8 @@ button:active {
     animation: bounce 1.5s infinite ease-in-out;
 }
 
-.loading {
+
+.loading { /* Loading screen */
     position: fixed;
     top: 0;
     left: 0;
@@ -238,8 +271,9 @@ button:active {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(255, 255, 255, 0.95);
-    z-index: 1000;
+    background: white; /* Solid white for cleaner loading */
+    z-index: 10000; /* Highest z-index */
+    transition: opacity 0.5s ease-out;
 }
 
 .loading p {
@@ -249,26 +283,15 @@ button:active {
 }
 
 .spinner {
-    border: 4px solid rgba(230, 126, 34, 0.1);
+    border: 4px solid rgba(47, 85, 209, 0.2); /* Using theme color */
     border-left-color: #2f55d1;
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
-    position: relative;
 }
 
-.spinner:after {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    right: -6px;
-    bottom: -6px;
-    border: 4px solid rgba(230, 126, 34, 0.05);
-    border-radius: 50%;
-}
 
 .hidden {
     display: none !important;
@@ -300,32 +323,21 @@ button:active {
 }
 
 .chat-box::-webkit-scrollbar-thumb:hover {
-    background: #d35400;
+    background: #d35400; /* Original hover color */
 }
 
 html {
     scroll-behavior: smooth;
 }
 
-.fade-in {
-    animation: fadeIn 0.5s ease-in-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.chat-container {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-.chat-container.visible {
-    opacity: 1;
-    transform: translateY(0);
+/* Element visibility transitions (used by JS for staggered animation) */
+.top-bar.visible,
+.chat-container.visible,
+#chatTitle.visible,
+.input-area.visible,
+.chat-box.visible { /* chat-box added */
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
 .loading-message {
@@ -335,37 +347,13 @@ html {
     color: #666;
 }
 
-.top-bar {
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-}
-
-.chat-container {
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-#chatTitle {
-    transition: opacity 0.3s ease-out 0.2s, transform 0.3s ease-out 0.2s;
-}
-
-.chat-box {
-    transition: opacity 0.3s ease-out 0.4s;
-}
-
-.input-area {
-    transition: opacity 0.3s ease-out 0.6s, transform 0.3s ease-out 0.6s;
-}
-
-.visible {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-}
-
 /* Streaming indicator */
 .streaming::after {
     content: '|';
     animation: blink-caret 1s step-end infinite;
     color: #2f55d1;
     font-weight: bold;
+    display: inline-block; /* Ensure it's part of the flow */
 }
 
 @keyframes blink-caret {
@@ -378,7 +366,7 @@ html {
     line-height: 1.6;
 }
 
-.message-text ul, 
+.message-text ul,
 .message-text ol {
     margin: 10px 0;
     padding-left: 20px;
@@ -388,45 +376,48 @@ html {
     margin-bottom: 5px;
 }
 
-.message-text strong {
-    display: block;
-    margin: 15px 0 10px 0;
-    color: #2f55d1;
-    font-size: 1.1em;
+.message-text strong { /* For markdown bold, not titles within messages */
+    color: #2f55d1; /* Keep if this is for emphasis, not structure */
+     /* display: block; margin: 15px 0 10px 0; font-size: 1.1em; Removed as it might be too opinionated for general strong tags */
 }
+
 
 /* Modal Styles */
 .modal {
-    display: none;
+    display: none; /* Hidden by default */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 200;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker backdrop */
+    z-index: 1000; /* High z-index */
     opacity: 0;
     transition: opacity 0.3s ease;
+    align-items: center; /* For vertical centering */
+    justify-content: center; /* For horizontal centering */
 }
 
 .modal.visible {
+    display: flex; /* Use flex for centering modal-content */
     opacity: 1;
 }
 
 .modal-content {
     background-color: white;
-    margin: 10% auto;
     padding: 25px;
     border-radius: 8px;
-    width: 80%;
+    width: 90%; /* More responsive width */
     max-width: 600px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transform: translateY(-20px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95); /* Start slightly smaller */
     transition: transform 0.3s ease;
+    max-height: 85vh; /* Max height for scrollability */
+    overflow-y: auto; /* Allow content to scroll */
 }
 
 .modal.visible .modal-content {
-    transform: translateY(0);
+    transform: scale(1); /* Animate to full size */
 }
 
 .close-modal {
@@ -436,6 +427,7 @@ html {
     font-weight: bold;
     cursor: pointer;
     transition: color 0.2s;
+    line-height: 1; /* Ensure it doesn't affect layout much */
 }
 
 .close-modal:hover {
@@ -445,15 +437,18 @@ html {
 .modal-content h2 {
     color: #2f55d1;
     margin-top: 0;
+    margin-bottom: 15px; /* More space */
 }
 
 .modal-content h3 {
     color: #2f55d1;
+    margin-top: 20px; /* Space above capabilities */
     margin-bottom: 10px;
 }
 
 .modal-content ul {
     padding-left: 20px;
+    list-style: disc; /* Explicitly set list style */
 }
 
 .modal-content li {
@@ -462,27 +457,27 @@ html {
 
 /* Suggested questions styles */
 .suggested-questions {
-    margin: 20px 0;
+    margin: 15px 0; /* Adjusted margin */
     padding: 15px;
     background-color: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #2b619e;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
 .suggested-title {
     font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 10px;
+    color: #555; /* Darker for better contrast */
+    margin-bottom: 12px;
     font-weight: 500;
 }
 
 .questions-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px; /* Increased gap */
 }
 
 .suggested-question {
@@ -493,90 +488,48 @@ html {
     padding: 8px 15px;
     font-size: 0.85rem;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    transition: all 0.2s ease;
+    white-space: normal; /* Allow wrapping for longer questions */
+    text-align: left; /* Align text to left if it wraps */
+    flex-grow: 1; /* Allow buttons to grow if space allows */
+    min-width: 150px; /* Minimum width before wrapping */
 }
+
 
 .suggested-question:hover {
     background-color: #2b619e;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* Hide suggested questions after user starts conversation */
-.chat-started .suggested-questions {
-    display: none;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-    }
-    .sidebar-header h2, 
-    .welcome-message,
-    .sidebar-button span:not(.icon),
-    .sidebar-footer {
-        display: none;
-    }
-    .sidebar-button {
-        justify-content: center;
-        padding: 12px 0;
-    }
-    .sidebar-button .icon {
-        margin-right: 0;
-        font-size: 1.3rem;
-    }
-    .main-content {
-        max-width: calc(100% - 70px);
-    }
-    .chat-container {
-        margin: 10px;
-        height: calc(100vh - 60px);
-    }
-    #chatTitle {
-        font-size: 1.1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .input-area {
-        flex-direction: column;
-    }
-    button {
-        margin-left: 0;
-        margin-top: 10px;
-    }
-    .message {
-        max-width: 90%;
-        min-width: 50%;
-    }
+    box-shadow: 0 3px 7px rgba(0,0,0,0.12);
 }
 
 /* Translation button styles */
 .translation-buttons {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 8px; /* Adjusted for potentially smaller padding on message */
+    top: 8px;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 1; /* Ensure it's above message text */
 }
 
-.bot-message:hover .translation-buttons {
+.bot-message:hover .translation-buttons,
+.bot-message .translation-buttons.persistent { /* For touch devices, make it always visible once shown */
     opacity: 1;
 }
 
+
 .translate-btn {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     color: #2f55d1;
     border: 1px solid #2f55d1;
     border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.7rem;
+    padding: 4px 10px; /* Increased padding for better tap target */
+    font-size: 0.75rem; /* Slightly larger font */
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     margin-left: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .translate-btn:hover {
@@ -584,18 +537,14 @@ html {
     color: white;
 }
 
-.bot-message {
-    position: relative;
-    padding-right: 40px !important; /* Make space for the button */
-}
-
 .loading-translation {
     color: #666;
     font-style: italic;
+    font-size: 0.85em; /* Slightly smaller */
     opacity: 0.7;
 }
 
-/* Add to style.css */
+/* Settings Form in Modal */
 .settings-form {
     margin-top: 20px;
 }
@@ -607,162 +556,264 @@ html {
     color: #333;
 }
 
-.settings-form input {
-    width: 100%;
+.settings-form input[type="password"], /* More specific */
+.settings-form input[type="text"] { /* If other inputs are added */
+    width: calc(100% - 24px); /* Account for padding */
     padding: 12px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
 
 .settings-buttons {
     display: flex;
-    gap: 10px;
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Space above buttons */
 }
 
-.settings-buttons button {
-    flex: 1;
-    padding: 10px;
+.settings-buttons button { /* Generic button styling for modal buttons */
+    flex: 1; /* Make buttons share space */
+    padding: 10px 15px; /* Standardized padding */
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
+
+/* Specific button styling in settings modal */
+#saveSettingsButton {
+    background-color: #2f55d1;
+    color: white;
+    border: none;
+}
+#saveSettingsButton:hover:not(:disabled) {
+    background-color: #2545a5; /* Darker shade for hover */
+}
+#saveSettingsButton:disabled {
+    background-color: #cccccc;
+    opacity: 0.7;
+}
+
 
 #clearKeyButton {
-    background-color: #f5f5f5;
+    background-color: #e0e0e0; /* Lighter grey */
     color: #333;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 #clearKeyButton:hover {
-    background-color: #e0e0e0;
+    background-color: #d1d1d1;
 }
 
-/* Mobile Sidebar Styles */
+
+/* ------------- Responsive Styles ------------- */
+
+/* Tablet and Smaller Desktop (from original CSS, slightly adjusted) */
+@media (max-width: 992px) { /* Adjust breakpoint if needed */
+    .sidebar {
+        width: 200px; /* Slightly narrower sidebar for tablets */
+    }
+    .main-content {
+        margin-left: 200px;
+    }
+    .message {
+        max-width: 85%;
+    }
+}
+
+
+/* Mobile Styles (max-width: 768px) - Major Overhaul for Bottom Bar */
 @media (max-width: 768px) {
+    body {
+        overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+    }
     .sidebar {
         width: 100%;
-        height: auto;
+        height: auto; /* Height determined by content or max-height */
         position: fixed;
         bottom: 0;
         left: 0;
-        z-index: 100;
+        top: auto; /* Override desktop top:0 */
+        z-index: 200; /* High z-index for mobile nav */
         background-color: #2f55d1;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
+        transition: max-height 0.35s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth transition */
         overflow: hidden;
-        max-height: 60px;
-        padding: 0;
+        max-height: 60px; /* Collapsed height */
+        padding: 0; /* Remove desktop padding */
+        flex-direction: column; /* Ensure children stack correctly */
     }
-    
+
     .sidebar.expanded {
-        max-height: 400px;
-        padding: 15px 0;
+        max-height: 70vh; /* Max height when expanded, adjust as needed */
+        overflow-y: auto; /* Allow scrolling if content exceeds max-height */
     }
-    
+
     .mobile-header {
         display: flex;
         align-items: center;
-        padding: 10px 15px;
+        padding: 0 15px; /* Padding for header items */
         cursor: pointer;
+        height: 60px; /* Fixed height for collapsed state */
+        user-select: none; /* Prevent text selection on tap */
     }
-    
-    .mobile-header h2 {
+
+    .mobile-header h2 { /* #mobileSidebarHeaderTitle */
         margin: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem; /* Adjusted size */
         color: white;
+        flex-grow: 1; /* Allow title to take available space */
+        text-align: center; /* Center title */
+        padding-right: 30px; /* Space for hamburger if it were on the right, or just balance */
     }
-    
+
     .hamburger {
         background: transparent;
         border: none;
         width: 30px;
         height: 24px;
         position: relative;
-        margin-right: 15px;
         padding: 0;
+        cursor: pointer;
+        z-index: 1; /* Ensure hamburger is clickable */
+        /* margin-right: 15px; Removed, title will center */
     }
-    
+
     .hamburger span {
         display: block;
         width: 100%;
         height: 3px;
         background: white;
+        border-radius: 3px; /* Rounded bars */
         position: absolute;
         left: 0;
         transition: all 0.3s ease;
     }
-    
-    .hamburger span:nth-child(1) {
-        top: 0;
-    }
-    
-    .hamburger span:nth-child(2) {
-        top: 50%;
-        transform: translateY(-50%);
-    }
-    
-    .hamburger span:nth-child(3) {
-        bottom: 0;
-    }
-    
-    .sidebar.expanded .hamburger span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-    
-    .sidebar.expanded .hamburger span:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .sidebar.expanded .hamburger span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -5px);
-    }
-    
+
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .hamburger span:nth-child(3) { bottom: 0; }
+
+    .sidebar.expanded .hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .sidebar.expanded .hamburger span:nth-child(2) { opacity: 0; }
+    .sidebar.expanded .hamburger span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); } /* Fine-tuned translation */
+
     .sidebar-content {
-        padding: 0 15px;
+        padding: 0 15px 15px; /* Padding for content when expanded */
         opacity: 0;
         transition: opacity 0.3s ease 0.1s;
-        height: 0;
-        overflow: hidden;
+        max-height: 0; /* Collapsed */
+        overflow: hidden; /* Hide content when collapsed */
     }
-    
+
     .sidebar.expanded .sidebar-content {
         opacity: 1;
-        height: auto;
-        overflow: visible;
+        max-height: calc(70vh - 60px); /* Available height minus header */
+        overflow-y: auto; /* Scroll content if it overflows */
     }
-    
-    .sidebar-header {
-        padding: 10px 0;
-    }
-    
-    .sidebar-menu {
-        padding: 10px 0;
-    }
-    
-    .sidebar-button {
-        padding: 12px 15px;
-        margin: 5px 0;
-        border-radius: 6px;
-    }
-    
-    .sidebar-footer {
-        padding: 10px 0;
-        font-size: 0.8rem;
-    }
-    
-    /* Adjust main content for mobile sidebar */
-    .main-content {
-        margin-left: 0;
-        padding-bottom: 80px; /* Space for mobile sidebar */
-    }
-    
-    /* Hide desktop elements */
-    .sidebar-header h2:not(.mobile-header h2) {
+
+    /* Hide original desktop sidebar header and welcome, show them within .sidebar-content */
+    .sidebar:not(.expanded) .sidebar-header,
+    .sidebar:not(.expanded) .sidebar-menu,
+    .sidebar:not(.expanded) .sidebar-footer {
         display: none;
     }
+    .sidebar.expanded .sidebar-header { display: block; padding: 15px 0; }
+    .sidebar.expanded .welcome-message { font-size: 0.85rem; }
+    .sidebar.expanded .sidebar-header h2 { font-size: 1.1rem; } /* #sidebarTitle when expanded */
+
+
+    .sidebar-menu { padding: 10px 0; }
+    .sidebar-button {
+        padding: 12px 10px; /* Adjust padding for mobile */
+        margin: 5px 0;
+        border-radius: 6px;
+        font-size: 0.9rem; /* Slightly smaller font for mobile menu items */
+    }
+    .sidebar-button .icon { margin-right: 12px; font-size: 1rem; }
+    .sidebar-button span:not(.icon) { /* Text part of the button */
+        /* display: block; /* Ensure it takes width if needed */
+    }
+
+
+    .sidebar-footer { padding: 15px 0 10px; text-align: center; }
+
+    /* Adjust main content for mobile bottom sidebar */
+    .main-content {
+        margin-left: 0; /* Full width */
+        padding-bottom: 75px; /* Space for collapsed mobile sidebar (60px + buffer) */
+        height: calc(100vh - 60px); /* Adjust height when sidebar is collapsed */
+    }
+    .sidebar.expanded ~ .main-content {
+      /* Potentially dim or disable main content when menu is open */
+      /* filter: blur(2px) brightness(0.8); */
+    }
+
+
+    .chat-container {
+        margin: 10px; /* Smaller margin on mobile */
+        /* height is determined by flex in main-content */
+    }
+
+    #chatTitle { font-size: 1.1rem; }
+    .top-bar { padding: 12px 15px; }
+
+
+    .message { max-width: 90%; min-width: 0; /* Allow messages to be smaller */ }
+    .bot-message { padding-right: 45px; /* Ensure space for smaller translate button */ }
+
+    .translate-btn {
+        padding: 3px 8px; /* Slightly smaller for mobile if needed */
+        font-size: 0.7rem;
+    }
+
+    /* Input area on very small screens */
+    .input-area {
+        padding: 10px;
+    }
+    #userInput { padding: 10px 15px; font-size: 0.9rem; }
+    #sendButton { padding: 10px 15px; font-size: 0.9rem; }
 }
 
-/* Larger mobile devices in landscape */
+/* Even Smaller Mobile Phones (e.g., iPhone SE) */
+@media (max-width: 480px) {
+    .input-area {
+        flex-direction: column; /* Stack input and button */
+        gap: 10px; /* Add gap when stacked */
+    }
+    #sendButton {
+        margin-left: 0; /* No margin when stacked */
+        width: 100%; /* Full width button */
+    }
+
+    .modal-content {
+        width: 95%; /* Almost full width */
+        padding: 20px;
+        max-height: calc(100vh - 40px); /* Ensure visible on small screens */
+    }
+    .modal-content h2 { font-size: 1.2rem; }
+    .modal-content p, .modal-content li { font-size: 0.9rem; }
+
+    .suggested-question {
+        font-size: 0.8rem; /* Smaller suggested questions */
+        padding: 7px 12px;
+    }
+    .questions-list { gap: 8px; }
+
+    .message { font-size: 0.9rem; }
+}
+
+/* Landscape on mobile */
 @media (max-width: 768px) and (orientation: landscape) {
-    .sidebar {
-        max-height: 50vh;
+    .sidebar.expanded {
+        max-height: 80vh; /* Allow more height in landscape */
+    }
+    .main-content {
+        padding-bottom: 75px; /* Consistent padding */
+    }
+    .chat-box {
+      /* Potentially adjust chat box view in landscape */
     }
 }
