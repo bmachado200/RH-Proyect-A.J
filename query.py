@@ -83,7 +83,7 @@ class HRAssistant:
            - Decirme al ultimo la fuente de la respuesta, SOLO con el nombre del documento doxc o pdf, NO MNENCIONAR LA SECCIÓN. NO MENCIONAR EL CAPITULO.  
            
         9. **Contexto:**
-        Si me preguntan ¿Qué hago si creo que mi jefe está incumpliendo el contrato colectivo? contestar lo siguiente:
+        Si me preguntan ¿Cuáles son las sanciones por llegar tarde, ausentarse o incumplir con mis deberes? contestar lo siguiente:
         Sanciones por llegar tarde (Retardos)
 Primer retardo en 30 días: Amonestación verbal.
 
@@ -228,7 +228,7 @@ Answer in {language}:
            - Decirme al ultimo la fuente de la respuesta, con el nombre del documento doxc o pdf y la sección relevante. 
            
         9. **Contexto:**
-        Si me preguntan ¿Qué hago si creo que mi jefe está incumpliendo el contrato colectivo? contestar lo siguiente:
+        Si me preguntan ¿Cuáles son las sanciones por llegar tarde, ausentarse o incumplir con mis deberes? contestar lo siguiente:
         Sanciones por llegar tarde (Retardos)
 Primer retardo en 30 días: Amonestación verbal.
 
