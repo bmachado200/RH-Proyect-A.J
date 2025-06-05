@@ -5,21 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        /* Initial styles from original file */
-        #appContainer {
-            display: none; /* Initially hidden, JS will show it */
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out; /* Added transition */
-        }
-        .top-bar, #chatTitle, .chat-container, .input-area, .chat-box {
-            opacity: 0; /* Handled by JS animations and CSS transitions */
-        }
-        /* Ensure body can scroll if modals make it too tall, though modals are fixed */
-        body.modal-open {
-            overflow: hidden;
-        }
-    </style>
 </head>
 <body>
     <div id="loadingScreen" class="loading">
@@ -35,10 +20,12 @@
                     <span></span>
                     <span></span>
                 </button>
-                <h2 id="mobileSidebarHeaderTitle">Menu</h2> </div>
+                <h2 id="mobileSidebarHeaderTitle">Menu</h2>
+            </div>
 
             <div class="sidebar-content">
-                <div class="sidebar-header"> <h2 id="sidebarTitle">HR Assistant</h2>
+                <div class="sidebar-header">
+                    <h2 id="sidebarTitle">HR Assistant</h2>
                     <p class="welcome-message" id="welcomeMessage">Hello! How can I help you today?</p>
                 </div>
 
@@ -50,10 +37,17 @@
                         <span class="icon">⚙️</span>
                         <span id="settingsButtonText">Settings</span>
                     </button>
-                    <button id="languageButton" class="sidebar-button language-switch">
-                        <span class="icon">🌐</span>
-                        <span id="languageButtonText">Switch to Español</span>
-                    </button>
+                    
+                    <div id="languageButtonContainer" class="language-dropdown sidebar-button-container"> <button id="currentLanguageDisplay" class="sidebar-button">
+                            <span class="icon">🌐</span>
+                            <span id="languageButtonText">English</span> <span class="arrow-down">▼</span>
+                        </button>
+                        <div id="languageOptions" class="dropdown-content">
+                            <a href="#" data-lang="english">English</a>
+                            <a href="#" data-lang="spanish">Español</a>
+                            <a href="#" data-lang="mandarin">中文</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="sidebar-footer">
@@ -82,7 +76,6 @@
                 <span class="close-modal">&times;</span>
                 <h2 id="helpModalTitle">About HR Assistant</h2>
                 <p id="helpModalText">This AI assistant specializes in HR policies and procedures.</p>
-
                 <h3 id="helpModalCapabilities">Capabilities:</h3>
                 <ul>
                     <li id="helpModalItem1">Answer questions about employee rights</li>
@@ -90,7 +83,6 @@
                     <li id="helpModalItem3">Provide information about benefits</li>
                     <li id="helpModalItem4">Clarify work regulations</li>
                 </ul>
-
                 <p id="helpModalLanguage">The assistant supports both English and Spanish.</p>
             </div>
         </div>
@@ -100,7 +92,6 @@
                 <span class="close-modal">&times;</span>
                 <h2 id="settingsModalTitle">Settings</h2>
                 <p id="settingsModalText">Enter your OpenAI API key below.</p>
-
                 <div class="settings-form">
                     <label for="apiKeyInput" id="apiKeyLabel">OpenAI API Key</label>
                     <input type="password" id="apiKeyInput" placeholder="sk-...">
