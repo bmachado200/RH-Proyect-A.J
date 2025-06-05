@@ -5,19 +5,24 @@ body {
     padding: 0;
     background-color: #f5f5f5;
     height: 100vh;
-    overflow: hidden; /* Prevent scrollbars from initial loading screen */
+    overflow: hidden;
 }
 
-body.modal-open { /* Added to prevent background scroll when modal is open */
+body.modal-open {
     overflow: hidden;
 }
 
 #appContainer {
-    display: flex; /* For desktop: sidebar + main content */
+    display: flex;
     height: 100vh;
     width: 100%;
-    opacity: 0; /* Initially hidden, JS will fade in */
+    opacity: 0; 
     transition: opacity 0.5s ease-in-out;
+}
+
+/* Initial styles from original file */
+.top-bar, #chatTitle, .chat-container, .input-area, .chat-box {
+    opacity: 0; /* Handled by JS animations and CSS transitions */
 }
 
 /* Sidebar Styles (Desktop) */
@@ -31,13 +36,13 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
     height: 100vh;
-    position: fixed; /* Default fixed for desktop, will be overridden for mobile */
+    position: fixed;
     left: 0;
     top: 0;
-    z-index: 100; /* Ensure sidebar is above other elements if needed */
+    z-index: 100;
 }
 
-.mobile-header { /* Hidden on desktop */
+.mobile-header {
     display: none;
 }
 
@@ -75,6 +80,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     cursor: pointer;
     transition: all 0.2s;
     font-size: 0.95rem;
+    box-sizing: border-box; /* Ensure padding doesn't break layout */
 }
 
 .sidebar-button:hover {
@@ -84,7 +90,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
 .sidebar-button .icon {
     margin-right: 10px;
     font-size: 1.1rem;
-    width: 24px; /* Ensure consistent icon spacing */
+    width: 24px;
     text-align: center;
 }
 
@@ -95,14 +101,56 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Main Language Dropdown */
+.language-dropdown {
+    position: relative; /* Needed for absolute positioning of dropdown-content */
+}
+
+.language-dropdown .sidebar-button .arrow-down { /* Style for the arrow */
+    margin-left: auto;
+    font-size: 0.7em;
+    transition: transform 0.2s;
+}
+
+.language-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #2545a5; /* Darker blue */
+    min-width: calc(100% - 0px); /* Match button width if padding is 0 on content */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 101; 
+    border-radius: 4px;
+    bottom: calc(100% + 5px); /* Position above the button */
+    left: 0; 
+    box-sizing: border-box;
+}
+
+.language-dropdown .dropdown-content.show {
+    display: block;
+}
+
+.language-dropdown .dropdown-content a {
+    color: white;
+    padding: 10px 20px; /* Consistent padding */
+    text-decoration: none;
+    display: block;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.language-dropdown .dropdown-content a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+
 /* Main Content Area */
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-left: 250px; /* Match desktop sidebar width */
+    margin-left: 250px;
     height: 100vh;
-    overflow: auto; /* Allow main content to scroll */
+    overflow: auto;
 }
 
 .top-bar {
@@ -111,15 +159,15 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 50; /* Below sidebar but above chat content */
-    opacity: 0; transform: translateY(-20px); /* Animation */
+    z-index: 50;
+    opacity: 0; transform: translateY(-20px);
 }
 
 #chatTitle {
     margin: 0;
     color: #2f55d1;
     font-size: 1.3rem;
-    opacity: 0; transform: translateY(-10px); /* Animation */
+    opacity: 0; transform: translateY(-10px);
 }
 
 .chat-container {
@@ -130,8 +178,8 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin: 20px;
-    min-height: 0; /* Important for flex child */
-    opacity: 0; transform: translateY(20px); /* Animation */
+    min-height: 0;
+    opacity: 0; transform: translateY(20px);
 }
 
 .chat-box {
@@ -142,43 +190,31 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     display: flex;
     flex-direction: column;
     min-height: 0;
-    opacity: 0; /* Animation */
+    opacity: 0;
 }
 
-/* --- Suggested New Styles --- */
-
-/* Adjusted general .message style for consistency */
 .message {
-    margin-bottom: 15px;          /* Slightly increased spacing between messages */
-    padding: 12px 18px;           /* Padding inside the bubble */
-    border-radius: 18px;          /* Default rounding - specific corners can be adjusted for tails */
-    max-width: 75%;               /* Max width of the bubble, allowing some breathing room */
-    line-height: 1.6;             /* Improved line spacing for readability */
-    font-size: 0.95rem;           /* Existing font size is good */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* A slightly softer base shadow */
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 75%;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     word-wrap: break-word;
     flex-shrink: 0;
-    position: relative;           /* Useful for potential future elements like timestamps */
-    /* min-width: initial; */     /* Removed to allow bubbles to size to content naturally */
+    position: relative;
 }
 
-/* New .user-message style */
 .user-message {
-    background-color: #007bff;    /* A common, vibrant blue for user messages */
-    color: white;                 /* White text for excellent contrast on the blue background */
-    
-    margin-left: auto;            /* Aligns message to the right */
-    margin-right: 5px;            /* Small margin from the very edge of the chat-box (optional) */
-    
-    /* Creates a more defined "tail" or speech bubble effect on the bottom-right */
-    border-radius: 18px 18px 6px 18px; 
-    
-    border: none;                 /* No border for a cleaner, modern flat look */
-    
-    /* A slightly more pronounced but soft shadow, with a hint of the blue color */
-    box-shadow: 0 3px 8px rgba(0, 105, 217, 0.15); 
-    
-    align-self: flex-end;         /* Ensures the bubble aligns to the right in the flex container */
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+    margin-right: 5px;
+    border-radius: 18px 18px 6px 18px;
+    border: none;
+    box-shadow: 0 3px 8px rgba(0, 105, 217, 0.15);
+    align-self: flex-end;
 }
 
 .bot-message {
@@ -187,22 +223,113 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     border-left: 4px solid #2f55d1;
     margin-right: auto;
     margin-left: 0;
-    border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px; /* Keep consistent with border */
+    border-top-left-radius: 4px; /* Keep consistent with border */
     color: #333;
     align-self: flex-start;
     padding: 15px 20px;
-    padding-right: 50px; /* Ensure space for translation button */
+    /* Padding right adjusted by translation buttons if they are outside */
 }
+
+/* Translation Buttons and Dropdown for Messages */
+.translation-buttons {
+    position: absolute;
+    right: 8px;
+    top: 8px; /* Position within the bot message padding */
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 2; /* Above message text */
+    display: flex; /* To align items if multiple buttons are added */
+    align-items: center;
+}
+
+.bot-message:hover .translation-buttons,
+.bot-message .translation-buttons.persistent {
+    opacity: 1;
+}
+
+.message-translation-dropdown {
+    position: relative; /* For absolute positioning of options */
+    display: inline-block;
+}
+
+.translate-dropdown-toggle {
+    background: rgba(47, 85, 209, 0.1); /* Subtle background related to theme */
+    color: #2f55d1;
+    border: 1px solid rgba(47, 85, 209, 0.3);
+    border-radius: 15px; /* circular */
+    padding: 5px; /* Adjust for icon size */
+    width: 28px; /* Fixed size */
+    height: 28px; /* Fixed size */
+    font-size: 0.9rem; /* Icon size */
+    line-height: 1; /* Center icon */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.translate-dropdown-toggle:hover {
+    background: #2f55d1;
+    color: white;
+    border-color: #2f55d1;
+}
+.translate-dropdown-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.translate-dropdown-options {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 180px; /* Enough space for "Translate to LanguageName" */
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
+    z-index: 5;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    right: 0; /* Align to the right of the toggle */
+    top: calc(100% + 5px); /* Below the toggle button */
+    max-height: 150px; /* Scroll if too many languages */
+    overflow-y: auto;
+}
+
+.translate-dropdown-options.show {
+    display: block;
+}
+
+.translate-dropdown-options a {
+    color: #333;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.translate-dropdown-options a:hover {
+    background-color: #f0f0f0;
+}
+
+.loading-translation {
+    color: #555;
+    font-style: italic;
+    font-size: 0.9em;
+    padding: 5px 0;
+}
+
 
 .input-area {
     display: flex;
     padding: 15px;
     background-color: white;
     border-top: 1px solid #eee;
-    opacity: 0; transform: translateY(10px); /* Animation */
+    opacity: 0; transform: translateY(10px);
 }
 
-#userInput { /* Changed from 'input' to be more specific */
+#userInput {
     flex: 1;
     padding: 12px 18px;
     border: 1px solid #ddd;
@@ -217,7 +344,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     box-shadow: 0 0 0 2px rgba(47, 85, 209, 0.3);
 }
 
-#sendButton { /* Changed from 'button' to be more specific */
+#sendButton {
     background-color: #2f55d1;
     color: white;
     border: none;
@@ -231,7 +358,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
 }
 
 #sendButton:hover:not(:disabled) {
-    background-color: #d35400; /* Original hover color */
+    background-color: #d35400;
     transform: translateY(-1px);
 }
 
@@ -245,24 +372,16 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     opacity: 0.7;
 }
 
-
-.typing-indicator {
-    display: inline-flex; /* Changed from inline-flex to flex for easier centering */
-    padding: 10px 16px;
-    background-color: white;
-    border-radius: 8px;
-    margin-bottom: 12px;
+.typing-indicator-inline {
+    display: flex;
     align-items: center;
-    border: 1px solid #f1f1f1;
-    align-self: flex-start; /* Match bot message alignment */
 }
-.typing-indicator .typing-text {
+.typing-indicator-inline .typing-text {
     margin-left: 8px;
     font-size: 0.9em;
     color: #555;
 }
-
-.typing-dots span { /* Renamed from .typing-indicator span */
+.typing-indicator-inline .typing-dots span {
     height: 8px;
     width: 8px;
     background-color: #2f55d1;
@@ -272,8 +391,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     animation: bounce 1.5s infinite ease-in-out;
 }
 
-
-.loading { /* Loading screen */
+.loading {
     position: fixed;
     top: 0;
     left: 0;
@@ -283,8 +401,8 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: white; /* Solid white for cleaner loading */
-    z-index: 10000; /* Highest z-index */
+    background: white;
+    z-index: 10000;
     transition: opacity 0.5s ease-out;
 }
 
@@ -295,7 +413,7 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
 }
 
 .spinner {
-    border: 4px solid rgba(47, 85, 209, 0.2); /* Using theme color */
+    border: 4px solid rgba(47, 85, 209, 0.2);
     border-left-color: #2f55d1;
     border-radius: 50%;
     width: 40px;
@@ -304,50 +422,29 @@ body.modal-open { /* Added to prevent background scroll when modal is open */
     margin-bottom: 20px;
 }
 
+.hidden { display: none !important; }
 
-.hidden {
-    display: none !important;
-}
-
-/* Animations */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
 @keyframes bounce {
     0%, 60%, 100% { transform: translateY(0); }
     30% { transform: translateY(-4px); }
 }
 
-.chat-box::-webkit-scrollbar {
-    width: 8px;
-}
+.chat-box::-webkit-scrollbar { width: 8px; }
+.chat-box::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.chat-box::-webkit-scrollbar-thumb { background: #2f55d1; border-radius: 4px; }
+.chat-box::-webkit-scrollbar-thumb:hover { background: #d35400; }
 
-.chat-box::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
+html { scroll-behavior: smooth; }
 
-.chat-box::-webkit-scrollbar-thumb {
-    background: #2f55d1;
-    border-radius: 4px;
-}
-
-.chat-box::-webkit-scrollbar-thumb:hover {
-    background: #d35400; /* Original hover color */
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-/* Element visibility transitions (used by JS for staggered animation) */
 .top-bar.visible,
 .chat-container.visible,
 #chatTitle.visible,
 .input-area.visible,
-.chat-box.visible { /* chat-box added */
+.chat-box.visible {
     opacity: 1 !important;
     transform: translateY(0) !important;
 }
@@ -359,13 +456,12 @@ html {
     color: #666;
 }
 
-/* Streaming indicator */
 .streaming::after {
     content: '|';
     animation: blink-caret 1s step-end infinite;
     color: #2f55d1;
     font-weight: bold;
-    display: inline-block; /* Ensure it's part of the flow */
+    display: inline-block;
 }
 
 @keyframes blink-caret {
@@ -373,468 +469,201 @@ html {
     50% { opacity: 1 }
 }
 
-.message-text {
-    white-space: pre-wrap;
-    line-height: 1.6;
-}
-
-.message-text ul,
-.message-text ol {
-    margin: 10px 0;
-    padding-left: 20px;
-}
-
-.message-text li {
-    margin-bottom: 5px;
-}
-
-.message-text strong { /* For markdown bold, not titles within messages */
-    color: #2f55d1; /* Keep if this is for emphasis, not structure */
-     /* display: block; margin: 15px 0 10px 0; font-size: 1.1em; Removed as it might be too opinionated for general strong tags */
-}
+.message-text { white-space: pre-wrap; line-height: 1.6; }
+.message-text ul, .message-text ol { margin: 10px 0; padding-left: 20px; }
+.message-text li { margin-bottom: 5px; }
+.message-text strong { color: #2f55d1; }
 
 
-/* Modal Styles */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Darker backdrop */
-    z-index: 1000; /* High z-index */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
     opacity: 0;
     transition: opacity 0.3s ease;
-    align-items: center; /* For vertical centering */
-    justify-content: center; /* For horizontal centering */
+    align-items: center;
+    justify-content: center;
 }
-
-.modal.visible {
-    display: flex; /* Use flex for centering modal-content */
-    opacity: 1;
-}
-
+.modal.visible { display: flex; opacity: 1; }
 .modal-content {
     background-color: white;
     padding: 25px;
     border-radius: 8px;
-    width: 90%; /* More responsive width */
+    width: 90%;
     max-width: 600px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    transform: scale(0.95); /* Start slightly smaller */
+    transform: scale(0.95);
     transition: transform 0.3s ease;
-    max-height: 85vh; /* Max height for scrollability */
-    overflow-y: auto; /* Allow content to scroll */
+    max-height: 85vh;
+    overflow-y: auto;
 }
-
-.modal.visible .modal-content {
-    transform: scale(1); /* Animate to full size */
-}
-
+.modal.visible .modal-content { transform: scale(1); }
 .close-modal {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.2s;
-    line-height: 1; /* Ensure it doesn't affect layout much */
+    color: #aaa; float: right;
+    font-size: 28px; font-weight: bold;
+    cursor: pointer; transition: color 0.2s;
+    line-height: 1;
 }
+.close-modal:hover { color: #333; }
+.modal-content h2 { color: #2f55d1; margin-top: 0; margin-bottom: 15px; }
+.modal-content h3 { color: #2f55d1; margin-top: 20px; margin-bottom: 10px; }
+.modal-content ul { padding-left: 20px; list-style: disc; }
+.modal-content li { margin-bottom: 8px; }
 
-.close-modal:hover {
-    color: #333;
-}
-
-.modal-content h2 {
-    color: #2f55d1;
-    margin-top: 0;
-    margin-bottom: 15px; /* More space */
-}
-
-.modal-content h3 {
-    color: #2f55d1;
-    margin-top: 20px; /* Space above capabilities */
-    margin-bottom: 10px;
-}
-
-.modal-content ul {
-    padding-left: 20px;
-    list-style: disc; /* Explicitly set list style */
-}
-
-.modal-content li {
-    margin-bottom: 8px;
-}
-
-/* Suggested questions styles */
 .suggested-questions {
-    margin: 15px 0; /* Adjusted margin */
-    padding: 15px;
+    margin: 15px 0; padding: 15px;
     background-color: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #2b619e;
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0; transform: translateY(20px);
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
-
 .suggested-title {
-    font-size: 0.9rem;
-    color: #555; /* Darker for better contrast */
-    margin-bottom: 12px;
-    font-weight: 500;
+    font-size: 0.9rem; color: #555;
+    margin-bottom: 12px; font-weight: 500;
 }
-
-.questions-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Increased gap */
-}
-
+.questions-list { display: flex; flex-wrap: wrap; gap: 10px; }
 .suggested-question {
-    background-color: #e9f0f8;
-    color: #2b619e;
-    border: 1px solid #d0dceb;
-    border-radius: 20px;
-    padding: 8px 15px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: normal; /* Allow wrapping for longer questions */
-    text-align: left; /* Align text to left if it wraps */
-    flex-grow: 1; /* Allow buttons to grow if space allows */
-    min-width: 150px; /* Minimum width before wrapping */
+    background-color: #e9f0f8; color: #2b619e;
+    border: 1px solid #d0dceb; border-radius: 20px;
+    padding: 8px 15px; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s ease;
+    white-space: normal; text-align: left;
+    flex-grow: 1; min-width: 150px;
 }
-
-.typing-indicator-inline {
-    display: flex; /* Aligns dots and text side-by-side */
-    align-items: center; /* Vertically aligns them */
-    /* You can add a little padding if needed, e.g., padding: 5px 0; */
-}
-
-/* The existing styles for .typing-dots, .typing-dots span, and .typing-text
-   should still work as they define the appearance of the dots and text itself. */
-
-
 .suggested-question:hover {
-    background-color: #2b619e;
-    color: white;
+    background-color: #2b619e; color: white;
     transform: translateY(-2px);
     box-shadow: 0 3px 7px rgba(0,0,0,0.12);
 }
 
-/* Translation button styles */
-.translation-buttons {
-    position: absolute;
-    right: 8px; /* Adjusted for potentially smaller padding on message */
-    top: 8px;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    z-index: 1; /* Ensure it's above message text */
-}
-
-.bot-message:hover .translation-buttons,
-.bot-message .translation-buttons.persistent { /* For touch devices, make it always visible once shown */
-    opacity: 1;
-}
-
-
-.translate-btn {
-    background: rgba(255, 255, 255, 0.95);
-    color: #2f55d1;
-    border: 1px solid #2f55d1;
-    border-radius: 4px;
-    padding: 4px 10px; /* Increased padding for better tap target */
-    font-size: 0.75rem; /* Slightly larger font */
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-left: 5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.translate-btn:hover {
-    background: #2f55d1;
-    color: white;
-}
-
-.loading-translation {
-    color: #666;
-    font-style: italic;
-    font-size: 0.85em; /* Slightly smaller */
-    opacity: 0.7;
-}
-
-/* Settings Form in Modal */
-.settings-form {
-    margin-top: 20px;
-}
-
+.settings-form { margin-top: 20px; }
 .settings-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #333;
+    display: block; margin-bottom: 8px;
+    font-weight: 500; color: #333;
+}
+.settings-form input[type="password"],
+.settings-form input[type="text"] {
+    width: calc(100% - 24px); padding: 12px;
+    margin-bottom: 15px; border: 1px solid #ddd;
+    border-radius: 4px; box-sizing: border-box;
+}
+.settings-buttons { display: flex; gap: 10px; margin-top: 10px; }
+.settings-buttons button {
+    flex: 1; padding: 10px 15px;
+    font-size: 0.9rem; border-radius: 5px;
+    cursor: pointer; transition: background-color 0.2s ease;
+}
+#saveSettingsButton { background-color: #2f55d1; color: white; border: none; }
+#saveSettingsButton:hover:not(:disabled) { background-color: #2545a5; }
+#saveSettingsButton:disabled { background-color: #cccccc; opacity: 0.7; }
+#clearKeyButton { background-color: #e0e0e0; color: #333; border: 1px solid #ccc; }
+#clearKeyButton:hover { background-color: #d1d1d1; }
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .sidebar { width: 200px; }
+    .main-content { margin-left: 200px; }
+    .message { max-width: 85%; }
 }
 
-.settings-form input[type="password"], /* More specific */
-.settings-form input[type="text"] { /* If other inputs are added */
-    width: calc(100% - 24px); /* Account for padding */
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-
-.settings-buttons {
-    display: flex;
-    gap: 10px; /* Space between buttons */
-    margin-top: 10px; /* Space above buttons */
-}
-
-.settings-buttons button { /* Generic button styling for modal buttons */
-    flex: 1; /* Make buttons share space */
-    padding: 10px 15px; /* Standardized padding */
-    font-size: 0.9rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-/* Specific button styling in settings modal */
-#saveSettingsButton {
-    background-color: #2f55d1;
-    color: white;
-    border: none;
-}
-#saveSettingsButton:hover:not(:disabled) {
-    background-color: #2545a5; /* Darker shade for hover */
-}
-#saveSettingsButton:disabled {
-    background-color: #cccccc;
-    opacity: 0.7;
-}
-
-
-#clearKeyButton {
-    background-color: #e0e0e0; /* Lighter grey */
-    color: #333;
-    border: 1px solid #ccc;
-}
-
-#clearKeyButton:hover {
-    background-color: #d1d1d1;
-}
-
-
-/* ------------- Responsive Styles ------------- */
-
-/* Tablet and Smaller Desktop (from original CSS, slightly adjusted) */
-@media (max-width: 992px) { /* Adjust breakpoint if needed */
-    .sidebar {
-        width: 200px; /* Slightly narrower sidebar for tablets */
-    }
-    .main-content {
-        margin-left: 200px;
-    }
-    .message {
-        max-width: 85%;
-    }
-}
-
-
-/* Mobile Styles (max-width: 768px) - Major Overhaul for Bottom Bar */
 @media (max-width: 768px) {
-    body {
-        overflow-x: hidden; /* Prevent horizontal scroll on mobile */
-    }
+    body { overflow-x: hidden; }
     .sidebar {
-        width: 100%;
-        height: auto; /* Height determined by content or max-height */
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        top: auto; /* Override desktop top:0 */
-        z-index: 200; /* High z-index for mobile nav */
-        background-color: #2f55d1;
+        width: 100%; height: auto;
+        position: fixed; bottom: 0; left: 0; top: auto;
+        z-index: 200;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-        transition: max-height 0.35s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth transition */
-        overflow: hidden;
-        max-height: 60px; /* Collapsed height */
-        padding: 0; /* Remove desktop padding */
-        flex-direction: column; /* Ensure children stack correctly */
+        transition: max-height 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        overflow: hidden; max-height: 60px;
+        padding: 0; flex-direction: column;
     }
-
-    .sidebar.expanded {
-        max-height: 70vh; /* Max height when expanded, adjust as needed */
-        overflow-y: auto; /* Allow scrolling if content exceeds max-height */
-    }
-
+    .sidebar.expanded { max-height: 70vh; overflow-y: auto; }
     .mobile-header {
-        display: flex;
-        align-items: center;
-        padding: 0 15px; /* Padding for header items */
-        cursor: pointer;
-        height: 60px; /* Fixed height for collapsed state */
-        user-select: none; /* Prevent text selection on tap */
+        display: flex; align-items: center;
+        padding: 0 15px; cursor: pointer;
+        height: 60px; user-select: none;
     }
-
-    .mobile-header h2 { /* #mobileSidebarHeaderTitle */
-        margin: 0;
-        font-size: 1.1rem; /* Adjusted size */
-        color: white;
-        flex-grow: 1; /* Allow title to take available space */
-        text-align: center; /* Center title */
-        padding-right: 30px; /* Space for hamburger if it were on the right, or just balance */
+    .mobile-header h2 {
+        margin: 0; font-size: 1.1rem;
+        color: white; flex-grow: 1;
+        text-align: center; padding-right: 30px;
     }
-
     .hamburger {
-        background: transparent;
-        border: none;
-        width: 30px;
-        height: 24px;
-        position: relative;
-        padding: 0;
-        cursor: pointer;
-        z-index: 1; /* Ensure hamburger is clickable */
-        /* margin-right: 15px; Removed, title will center */
+        background: transparent; border: none;
+        width: 30px; height: 24px;
+        position: relative; padding: 0;
+        cursor: pointer; z-index: 1;
     }
-
     .hamburger span {
-        display: block;
-        width: 100%;
-        height: 3px;
-        background: white;
-        border-radius: 3px; /* Rounded bars */
-        position: absolute;
-        left: 0;
+        display: block; width: 100%; height: 3px;
+        background: white; border-radius: 3px;
+        position: absolute; left: 0;
         transition: all 0.3s ease;
     }
-
     .hamburger span:nth-child(1) { top: 0; }
     .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
     .hamburger span:nth-child(3) { bottom: 0; }
-
     .sidebar.expanded .hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .sidebar.expanded .hamburger span:nth-child(2) { opacity: 0; }
-    .sidebar.expanded .hamburger span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); } /* Fine-tuned translation */
-
+    .sidebar.expanded .hamburger span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
     .sidebar-content {
-        padding: 0 15px 15px; /* Padding for content when expanded */
-        opacity: 0;
+        padding: 0 15px 15px; opacity: 0;
         transition: opacity 0.3s ease 0.1s;
-        max-height: 0; /* Collapsed */
-        overflow: hidden; /* Hide content when collapsed */
+        max-height: 0; overflow: hidden;
     }
-
     .sidebar.expanded .sidebar-content {
-        opacity: 1;
-        max-height: calc(70vh - 60px); /* Available height minus header */
-        overflow-y: auto; /* Scroll content if it overflows */
+        opacity: 1; max-height: calc(70vh - 60px);
+        overflow-y: auto;
     }
-
-    /* Hide original desktop sidebar header and welcome, show them within .sidebar-content */
     .sidebar:not(.expanded) .sidebar-header,
     .sidebar:not(.expanded) .sidebar-menu,
-    .sidebar:not(.expanded) .sidebar-footer {
-        display: none;
-    }
+    .sidebar:not(.expanded) .sidebar-footer { display: none; }
     .sidebar.expanded .sidebar-header { display: block; padding: 15px 0; }
     .sidebar.expanded .welcome-message { font-size: 0.85rem; }
-    .sidebar.expanded .sidebar-header h2 { font-size: 1.1rem; } /* #sidebarTitle when expanded */
-
-
+    .sidebar.expanded .sidebar-header h2 { font-size: 1.1rem; }
     .sidebar-menu { padding: 10px 0; }
-    .sidebar-button {
-        padding: 12px 10px; /* Adjust padding for mobile */
-        margin: 5px 0;
-        border-radius: 6px;
-        font-size: 0.9rem; /* Slightly smaller font for mobile menu items */
-    }
+    .sidebar-button { padding: 12px 10px; margin: 5px 0; border-radius: 6px; font-size: 0.9rem; }
     .sidebar-button .icon { margin-right: 12px; font-size: 1rem; }
-    .sidebar-button span:not(.icon) { /* Text part of the button */
-        /* display: block; /* Ensure it takes width if needed */
+    .language-dropdown .dropdown-content { /* Adjust for mobile if needed */
+        bottom: calc(100% + 5px); /* Position above for mobile too */
+        /* width: auto;  Allow it to size to content on mobile if preferred */
+        min-width: 150px;
     }
-
-
     .sidebar-footer { padding: 15px 0 10px; text-align: center; }
-
-    /* Adjust main content for mobile bottom sidebar */
     .main-content {
-        margin-left: 0; /* Full width */
-        padding-bottom: 75px; /* Space for collapsed mobile sidebar (60px + buffer) */
-        height: calc(100vh - 60px); /* Adjust height when sidebar is collapsed */
+        margin-left: 0; padding-bottom: 75px;
+        height: calc(100vh - 60px);
     }
-    .sidebar.expanded ~ .main-content {
-      /* Potentially dim or disable main content when menu is open */
-      /* filter: blur(2px) brightness(0.8); */
-    }
-
-
-    .chat-container {
-        margin: 10px; /* Smaller margin on mobile */
-        /* height is determined by flex in main-content */
-    }
-
+    .chat-container { margin: 10px; }
     #chatTitle { font-size: 1.1rem; }
     .top-bar { padding: 12px 15px; }
+    .message { max-width: 90%; min-width: 0; }
+    .bot-message { padding-right: 45px; /* Space for translate button */ }
 
-
-    .message { max-width: 90%; min-width: 0; /* Allow messages to be smaller */ }
-    .bot-message { padding-right: 45px; /* Ensure space for smaller translate button */ }
-
-    .translate-btn {
-        padding: 3px 8px; /* Slightly smaller for mobile if needed */
-        font-size: 0.7rem;
-    }
-
-    /* Input area on very small screens */
-    .input-area {
-        padding: 10px;
-    }
+    .translate-dropdown-toggle { font-size: 0.8rem; width:26px; height:26px; padding:4px; }
+    .translate-dropdown-options a {font-size: 0.75rem;}
+    
+    .input-area { padding: 10px; }
     #userInput { padding: 10px 15px; font-size: 0.9rem; }
     #sendButton { padding: 10px 15px; font-size: 0.9rem; }
 }
 
-/* Even Smaller Mobile Phones (e.g., iPhone SE) */
 @media (max-width: 480px) {
-    .input-area {
-        flex-direction: column; /* Stack input and button */
-        gap: 10px; /* Add gap when stacked */
-    }
-    #sendButton {
-        margin-left: 0; /* No margin when stacked */
-        width: 100%; /* Full width button */
-    }
-
-    .modal-content {
-        width: 95%; /* Almost full width */
-        padding: 20px;
-        max-height: calc(100vh - 40px); /* Ensure visible on small screens */
-    }
+    .input-area { flex-direction: column; gap: 10px; }
+    #sendButton { margin-left: 0; width: 100%; }
+    .modal-content { width: 95%; padding: 20px; max-height: calc(100vh - 40px); }
     .modal-content h2 { font-size: 1.2rem; }
     .modal-content p, .modal-content li { font-size: 0.9rem; }
-
-    .suggested-question {
-        font-size: 0.8rem; /* Smaller suggested questions */
-        padding: 7px 12px;
-    }
+    .suggested-question { font-size: 0.8rem; padding: 7px 12px; }
     .questions-list { gap: 8px; }
-
     .message { font-size: 0.9rem; }
 }
 
-/* Landscape on mobile */
 @media (max-width: 768px) and (orientation: landscape) {
-    .sidebar.expanded {
-        max-height: 80vh; /* Allow more height in landscape */
-    }
-    .main-content {
-        padding-bottom: 75px; /* Consistent padding */
-    }
-    .chat-box {
-      /* Potentially adjust chat box view in landscape */
-    }
+    .sidebar.expanded { max-height: 80vh; }
+    .main-content { padding-bottom: 75px; }
 }
